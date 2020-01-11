@@ -17,8 +17,9 @@ package expressivo;
 public interface Expression {
     
     // Datatype definition
-    //   TODO
-    
+    //   Expression = Number(numb:double) + Variable(name:String) + 
+    //                Sum(left:Expression, right:Expression) + 
+    //                Product(left:Expression, right:Expression)
     /**
      * Parse an expression.
      * @param input expression to parse, as defined in the PS3 handout.
