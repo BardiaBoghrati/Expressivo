@@ -30,9 +30,14 @@ import Configuration;
  * how to use Antlr and has links to reference information.
  */
 root : sum EOF;
-sum : primitive ('+' primitive)*;
-primitive : NUMBER | '(' sum ')';
-NUMBER : [0-9]+;
+sum : product ('+' product)*;
+product : primitive ('*' primitive)*;
+primitive : TERM | '(' sum ')';
+TERM : NUMBER | VARIABLE;
+NUMBER : DECIMAL | INTEGER;
+DECIMAL : INTEGER '.' INTEGER;
+INTEGER : [0-9]+;
+VARIABLE : [a-zA-Z]+;
 
 /* Tell Antlr to ignore spaces around tokens. */
 SPACES : [ ]+ -> skip;
