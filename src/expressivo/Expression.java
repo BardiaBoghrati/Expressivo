@@ -3,6 +3,17 @@
  */
 package expressivo;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import expressivo.parser.ExpressionLexer;
+import expressivo.parser.ExpressionParser;
+
 /**
  * An immutable data type representing a polynomial expression of:
  *   + and *
@@ -27,7 +38,34 @@ public interface Expression {
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static Expression parse(String input) {
-        throw new RuntimeException("unimplemented");
+        // create a stream of characters from string
+        CharStream stream = new ANTLRInputStream(input);
+        
+        // make a lexer
+        ExpressionLexer lexer = new ExpressionLexer(stream);
+        lexer.reportErrorsAsExceptions();
+        
+        // read tokens from stream
+        TokenStream tokens = new CommonTokenStream(lexer);
+        
+        // parser the token stream
+        ExpressionParser parser = new ExpressionParser(tokens);
+        parser.reportErrorsAsExceptions();
+        
+        // use parser to create parse tree matching the entire input
+        ParseTree tree;
+        try {
+            tree = parser.root();
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Invalid Expression");
+        }
+        
+        // traverse the parse tree and construct a Expression object
+        ParseTreeWalker walker = new ParseTreeWalker();
+        MakeExpression exprMaker = new MakeExpression();
+        walker.walk(exprMaker, tree);
+        
+        return exprMaker.getExpression();
     }
     
     /**

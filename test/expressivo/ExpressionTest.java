@@ -150,7 +150,7 @@ public class ExpressionTest {
     public void testEqualsFor_A_Plus_B_Times_C(){
         Expression a1 = Expression.parse("a+b*c");
         Expression a2 = Expression.parse("((a)+(b*c))");
-        Expression a3 = Expression.parse(" a + b + c ");
+        Expression a3 = Expression.parse(" a + b * c ");
         
         Expression b1 = Expression.parse("(a+b)*c");
         Expression b2 = Expression.parse("((a+b)*c)");
@@ -408,6 +408,22 @@ public class ExpressionTest {
     }
     
     @Test
+    public void testHashCodeFor_Variable_Times_Variable(){
+        Expression a1 = Expression.parse("a*b");
+        Expression a2 = Expression.parse("((a)*(b))");
+        
+        assertEquals(a1, a2);
+    }
+    
+    @Test
+    public void testHashCodeFor_Variable_Times_Number(){
+        Expression a1 = Expression.parse("a * 2");
+        Expression a2 = Expression.parse("((a * 2))");
+        
+        assertEquals(a1, a2);
+    }
+    
+    @Test
     public void testHashCodeFor_Decimal_Plus_Decimal(){
         Expression a1 = Expression.parse("0.50+0.5");
         Expression a2 = Expression.parse("0.5+0.50");
@@ -422,7 +438,31 @@ public class ExpressionTest {
         
         assertEquals(a1, a2);
     }
-
+    
+    @Test
+    public void testHashCodeFor_Decimal_Times_Decimal(){
+        Expression a1 = Expression.parse("0.50*0.5");
+        Expression a2 = Expression.parse("0.5*0.50");
+        
+        assertEquals(a1.hashCode(), a2.hashCode());
+    }
+    
+    @Test
+    public void testHashCodeFor_Integer_Times_Integer(){
+        Expression a1 = Expression.parse("1*2");
+        Expression a2 = Expression.parse("1.0*2.00");
+        
+        assertEquals(a1, a2);
+    }
+    
+    @Test
+    public void testHashCodeFor_3Array_Grouping(){
+        Expression a1 = Expression.parse("1 + a * 0.5");
+        Expression a2 = Expression.parse("1 + (a * 0.5)");
+        
+        assertEquals(a1, a2);
+    }
+    
     
     @Test
     public void testToStringFor_SingleInteger(){
@@ -546,6 +586,11 @@ public class ExpressionTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
+    public void testParse_MissingOperatorBetweenGroupings(){
+        Expression.parse("(a)(b)");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
     public void testParse_SpacedOutNumberRepresentation1(){
         Expression.parse("2 . 0");
     }
@@ -574,4 +619,40 @@ public class ExpressionTest {
     public void testParse_InvalidBracket(){
         Expression.parse("[3]");
     }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_NegativeNumber(){
+        Expression.parse("-1.00");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_Negation(){
+        Expression.parse("-(a)");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_Subtraction(){
+        Expression.parse("2 - 3");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_Exponentiation(){
+        Expression.parse("x^2");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_Division(){
+        Expression.parse("4 / 2");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_Modulus(){
+        Expression.parse("10 % 5");
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_InvalidNumberRepresentation(){
+        Expression.parse("6.02e23");
+    }
+    
 }
