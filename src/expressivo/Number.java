@@ -38,4 +38,10 @@ public class Number implements Expression {
     public int hashCode(){
         return Double.hashCode(number);
     }
+    
+    @Override
+    public Expression differentiate(Expression x){
+        throw new RuntimeException("method not implemented");
+    }
+    
 }

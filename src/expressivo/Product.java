@@ -35,4 +35,9 @@ public class Product implements Expression {
     public int hashCode(){
         return left.hashCode() * right.hashCode();
     }
+
+    @Override
+    public Expression differentiate(Expression x) {
+        throw new RuntimeException("method not implemented");
+    }
 }

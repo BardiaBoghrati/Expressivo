@@ -38,4 +38,9 @@ public class Variable implements Expression {
     public int hashCode(){
         return name.hashCode();
     }
+
+    @Override
+    public Expression differentiate(Expression x) {
+        throw new RuntimeException("method not implemented");
+    }
 }

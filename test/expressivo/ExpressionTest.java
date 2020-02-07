@@ -655,4 +655,334 @@ public class ExpressionTest {
         Expression.parse("6.02e23");
     }
     
+    
+    @Test
+    public void testDifferentiate_Integer(){
+        Expression a1 = Expression.parse("2");
+        Expression a2 = Expression.parse("2.00");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("0");
+        
+        assertEquals(d1, expected);
+        assertEquals(d2, d1);
+    }
+    
+    @Test
+    public void testDifferentiate_Decimal(){
+        Expression a1 = Expression.parse("0.5");
+        Expression a2 = Expression.parse("0.500");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("0");
+        
+        assertEquals(d1, expected);
+        assertEquals(d2, d1);
+    }
+    
+    @Test
+    public void testDifferentiate_Zero(){
+        Expression a1 = Expression.parse("0");
+        Expression a2 = Expression.parse("0.0");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("0");
+        
+        assertEquals(d1, expected);
+        assertEquals(d2, d1);
+    }
+    
+    @Test
+    public void testDifferentiate_One(){
+        Expression a1 = Expression.parse("1");
+        Expression a2 = Expression.parse("1.00");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("0");
+        
+        assertEquals(d1, expected);
+        assertEquals(d2, d1);
+    }
+    
+    @Test
+    public void testDifferentiate_VariableWithRespectToDifferentVariable(){
+        Expression a1 = Expression.parse("y");
+        Expression a2 = Expression.parse("X");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("0");
+        
+        assertEquals(d1, expected);
+        assertEquals(d2, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_VariableWithRespectToSameVariable(){
+        Expression a1 = Expression.parse("x");
+        Expression a2 = Expression.parse("(x)");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("1");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+    
+    @Test
+    public void testDifferentiate_xPlusxWithRepectTox(){
+        Expression a1 = Expression.parse("x+x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("(1)+(1)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_xPlusyWithRespectTox(){
+        Expression a1 = Expression.parse("x+y");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("(1)+(0)");
+        
+        assertEquals(d1, expected); 
+    }
+    
+    @Test
+    public void testDifferentiate_yPlusxWithRespectTox(){
+        Expression a1 = Expression.parse("y+x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("(0)+(1)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_0PlusxWithRespectTox(){
+        Expression a1 = Expression.parse("0+x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("(0)+(1)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_1PlusxWithRespectTox(){
+        Expression a1 = Expression.parse("1+x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("(0)+(1)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_yPluszWithRespectTox(){
+        Expression a1 = Expression.parse("y+z");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("(0)+(0)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_NumberPlusNumberWithRespectTox(){
+        Expression a1 = Expression.parse("2+0.5");
+        Expression a2 = Expression.parse("0.5+2");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("(0)+(0)");
+        
+        assertEquals(d1, expected);
+        assertEquals(d2, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_xTimesxWithRespectTox(){
+        Expression a1 = Expression.parse("x*x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("x*(1) + x*(1)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_xTimesyWithRespectTox(){
+        Expression a1 = Expression.parse("x*y");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("x*(0) + y*(1)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_yTimesxWithRespectTox(){
+        Expression a1 = Expression.parse("y*x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("y*(1) + x*(0)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_0TimesxWithRespectTox(){
+        Expression a1 = Expression.parse("0*x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("0*(1) + x*(0)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_1TimesxWithRespectTox(){
+        Expression a1 = Expression.parse("1*x");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("1*(1) + x*(0)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_yTimeszWithRespectTox(){
+        Expression a1 = Expression.parse("y*z");
+        Expression x = Expression.parse("x"); 
+        
+        Expression d1 = a1.differentiate(x);
+        Expression expected = Expression.parse("y*(0) + z*(0)");
+        
+        assertEquals(d1, expected);
+    }
+    
+    @Test
+    public void testDifferentiate_NumberTimesNumberWithRespectTox(){
+        Expression a1 = Expression.parse("2*0.5");
+        Expression a2 = Expression.parse("0.5*2");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected1 = Expression.parse("2*(0) + 0.5*(0)");
+        Expression expected2 = Expression.parse("0.5*(0) + 2*(0)");
+        
+        assertEquals(d1, expected1);
+        assertEquals(d2, expected2);
+    }
+    
+    @Test
+    public void testDifferentiate_xPlusx_Plusx_WithRespectTox(){
+        Expression a1 = Expression.parse("x+x+x");
+        Expression a2 = Expression.parse("(x+x)+x");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("((1) + (1)) + (1)");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+    
+    @Test
+    public void testDifferentiate_xPlus_xPlusx_WithRespectTox(){
+        Expression a1 = Expression.parse("x+(x+x)");
+        Expression a2 = Expression.parse("(x+(x+x))");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("(1) + ((1) + (1))");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+    
+    @Test
+    public void testDifferentiate_xPlus_xTimesx_WithRespectTox(){
+        Expression a1 = Expression.parse("x+x*x");
+        Expression a2 = Expression.parse("x+(x*x)");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("(1) + (x*(1) + x*(1))");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+    
+    @Test
+    public void testDifferentiate_xPlusx_Timesx_WithRespectTox(){
+        Expression a1 = Expression.parse("(x+x)*x");
+        Expression a2 = Expression.parse("((x+x)*x)");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("(x + x)*1 + x*((1) + (1))");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+    
+    @Test
+    public void testDifferentiate_xTimesx_Timesx_WithRespectTox(){
+        Expression a1 = Expression.parse("x*x*x");
+        Expression a2 = Expression.parse("(x*x)*x");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("(x*x)*(1) + x*((1) + (1))");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+    
+    @Test
+    public void testDifferentiate_xTimes_xTimesx_WithRespectTox(){
+        Expression a1 = Expression.parse("x*(x*x)");
+        Expression a2 = Expression.parse("(x*(x*x))");
+        Expression x = Expression.parse("x");
+        
+        Expression d1 = a1.differentiate(x);
+        Expression d2 = a2.differentiate(x);
+        Expression expected = Expression.parse("x*(1 + 1) + (x*x)*1");
+        
+        assertEquals(d1, expected);
+        assertEquals(d1, d2);
+    }
+
 }

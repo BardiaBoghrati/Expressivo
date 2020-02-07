@@ -31,6 +31,7 @@ public interface Expression {
     //   Expression = Number(numb:double) + Variable(name:String) + 
     //                Sum(left:Expression, right:Expression) + 
     //                Product(left:Expression, right:Expression)
+    
     /**
      * Parse an expression.
      * @param input expression to parse, as defined in the PS3 handout.
@@ -57,7 +58,7 @@ public interface Expression {
         try {
             tree = parser.root();
         } catch (RuntimeException e) {
-            throw new IllegalArgumentException("Invalid Expression");
+            throw new IllegalArgumentException("ParseError: invalid expression");
         }
         
         // traverse the parse tree and construct a Expression object
@@ -92,5 +93,29 @@ public interface Expression {
     public int hashCode();
     
     // TODO more instance methods
+    /**
+     * Differentiates this expression with respect to variable x.
+     * <p>
+     * The result is an expression with structure exactly matching expansion of this expression according to
+     * the differentiation rules with no simplification:
+     * </p>
+     * <pre>
+     * d(this)/dx = 0 if this = c where c is a constant or variable other than x
+     *            = 1 if this = x
+     *            = du/dx + dv/dx if this = u + v
+     *            = u*(dv/dx) + v*(du/dx) if this = u*v
+     * </pre>
+     * <p>For example,</p>
+     * <pre>
+     * if this represents expression 2*(x + y), then
+     * d(2*(x + y))/dx = 2*d(x + y)/dx + (x + y)*d(2)/dx
+     *                 = 2*(dx/dx + dy/dx) + (x + y)*0
+     *                 = 2*(1 + 0) + (x + y)*0
+     * </pre>
+     * <p>The result will be and ATS structurally equivalent to to the representation "2*(1 + 0) + (x + y)*0"</p>
+     * @param x must be an expression representing a variable
+     * @return an expression structurally equivalent to expansion of this expression according to the rules above.
+     */
+    public Expression differentiate(Expression x);
     
 }
