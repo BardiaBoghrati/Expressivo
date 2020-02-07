@@ -38,6 +38,6 @@ public class Product implements Expression {
 
     @Override
     public Expression differentiate(Expression x) {
-        throw new RuntimeException("method not implemented");
+        return new Sum(new Product(left, right.differentiate(x)), new Product(right, left.differentiate(x)));
     }
 }

@@ -41,6 +41,10 @@ public class Variable implements Expression {
 
     @Override
     public Expression differentiate(Expression x) {
-        throw new RuntimeException("method not implemented");
+        if(this.equals(x)){
+            return new Number(1);
+        }else{
+            return new Number(0);
+        }
     }
 }

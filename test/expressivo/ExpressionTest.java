@@ -965,7 +965,7 @@ public class ExpressionTest {
         
         Expression d1 = a1.differentiate(x);
         Expression d2 = a2.differentiate(x);
-        Expression expected = Expression.parse("(x*x)*(1) + x*((1) + (1))");
+        Expression expected = Expression.parse("(x*x)*(1) + x*(x*1 + x*1)");
         
         assertEquals(d1, expected);
         assertEquals(d1, d2);
@@ -979,7 +979,7 @@ public class ExpressionTest {
         
         Expression d1 = a1.differentiate(x);
         Expression d2 = a2.differentiate(x);
-        Expression expected = Expression.parse("x*(1 + 1) + (x*x)*1");
+        Expression expected = Expression.parse("x*(x*1 + x*1) + (x*x)*1");
         
         assertEquals(d1, expected);
         assertEquals(d1, d2);

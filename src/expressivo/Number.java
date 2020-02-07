@@ -41,7 +41,7 @@ public class Number implements Expression {
     
     @Override
     public Expression differentiate(Expression x){
-        throw new RuntimeException("method not implemented");
+        return new Number(0);
     }
     
 }

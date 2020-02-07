@@ -38,6 +38,6 @@ public class Sum implements Expression {
 
     @Override
     public Expression differentiate(Expression x) {
-        throw new RuntimeException("method not implemented");
+        return new Sum(left.differentiate(x), right.differentiate(x));
     }
 }
