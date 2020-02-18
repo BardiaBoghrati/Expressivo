@@ -92,7 +92,6 @@ public interface Expression {
     @Override
     public int hashCode();
     
-    // TODO more instance methods
     /**
      * Differentiates this expression with respect to variable x.
      * <p>

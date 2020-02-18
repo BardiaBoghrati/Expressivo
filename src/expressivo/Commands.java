@@ -20,11 +20,24 @@ public class Commands {
      * @param expression the expression to differentiate
      * @param variable the variable to differentiate by, a case-sensitive nonempty string of letters.
      * @return expression's derivative with respect to variable.  Must be a valid expression equal
-     *         to the derivative, but doesn't need to be in simplest or canonical form.
+     *         to the derivative with structure specified by Expression.differentiate(); i.e,
+     *         <pre>
+     *         let x = Expression.differentiate(Expression.parse(expression), Expression.parse(variable))) and
+     *         let y = Expression.parse(Commands.differentiate(expression, variable)),
+     *         then x.equals(y)
+     *         </pre>
      * @throws IllegalArgumentException if the expression or variable is invalid
      */
     public static String differentiate(String expression, String variable) {
-        throw new RuntimeException("unimplemented");
+        if(!variable.matches("[a-zA-z]+")){
+            throw new IllegalArgumentException("ParseError: invalid variable in derivative command ");
+        }
+        
+        Expression var = Expression.parse(variable);
+        Expression expr = Expression.parse(expression);
+        Expression derivative = expr.differentiate(var);
+        
+        return derivative.toString();
     }
     
     /**
