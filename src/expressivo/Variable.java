@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 public class Variable implements Expression {
     private final String name;
     
@@ -46,5 +48,10 @@ public class Variable implements Expression {
         }else{
             return new Number(0);
         }
+    }
+    
+    @Override
+    public Expression simplify(Map<Expression, Double> environment) {
+        throw new RuntimeException("not implemented");
     }
 }

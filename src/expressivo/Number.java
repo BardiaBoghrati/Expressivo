@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 public class Number implements Expression {
     private final double number;
     
@@ -42,6 +44,11 @@ public class Number implements Expression {
     @Override
     public Expression differentiate(Expression x){
         return new Number(0);
+    }
+    
+    @Override
+    public Expression simplify(Map<Expression, Double> environment) {
+        throw new RuntimeException("not implemented");
     }
     
 }

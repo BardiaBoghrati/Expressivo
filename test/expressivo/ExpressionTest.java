@@ -5,6 +5,9 @@ package expressivo;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -984,5 +987,913 @@ public class ExpressionTest {
         assertEquals(d1, expected);
         assertEquals(d1, d2);
     }
+    
+    
+    @Test
+    public void testSimplify_NumberWithEmptyEnviroment(){
+        Expression expr = Expression.parse("1.00");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("1"));
+        assertEquals(result.simplify(x2), Expression.parse("1"));
+        assertEquals(result.simplify(x3), Expression.parse("1"));
+        assertEquals(result.simplify(x4), Expression.parse("1"));
+        assertEquals(result.simplify(x5), Expression.parse("1"));
+    }
+    
+    @Test
+    public void testSimplify_NumberWithNonEmptyEnviroment(){
+        Expression expr = Expression.parse("1.00");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("X"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("1"));
+        assertEquals(result.simplify(x2), Expression.parse("1"));
+        assertEquals(result.simplify(x3), Expression.parse("1"));
+        assertEquals(result.simplify(x4), Expression.parse("1"));
+        assertEquals(result.simplify(x5), Expression.parse("1"));
+    }
+    
+    @Test
+    public void testSimplify_xWithEmptyEnviroment(){
+        Expression expr = Expression.parse("x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("0.0"));
+        assertEquals(result.simplify(x2), Expression.parse("0.5"));
+        assertEquals(result.simplify(x3), Expression.parse("1.0"));
+        assertEquals(result.simplify(x4), Expression.parse("2.0"));
+        assertEquals(result.simplify(x5), Expression.parse("3.0"));
+    }
+    
+    @Test
+    public void testSimplify_xWithSingleAssigmentToX(){
+        Expression expr = Expression.parse("x");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("X"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("0.0"));
+        assertEquals(result.simplify(x2), Expression.parse("0.5"));
+        assertEquals(result.simplify(x3), Expression.parse("1.0"));
+        assertEquals(result.simplify(x4), Expression.parse("2.0"));
+        assertEquals(result.simplify(x5), Expression.parse("3.0"));
+    }
+    
+    @Test
+    public void testSimplify_xWithSingleAssigmentTox(){
+        Expression expr = Expression.parse("x");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 10.5);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("10.5"));
+        assertEquals(result.simplify(x2), Expression.parse("10.5"));
+        assertEquals(result.simplify(x3), Expression.parse("10.5"));
+        assertEquals(result.simplify(x4), Expression.parse("10.5"));
+        assertEquals(result.simplify(x5), Expression.parse("10.5"));
+    }
+    
+    @Test
+    public void testSimplify_1Plus2WithEmptyEnviroment(){
+        Expression expr = Expression.parse("1+2");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("3"));
+        assertEquals(result.simplify(x2), Expression.parse("3"));
+        assertEquals(result.simplify(x3), Expression.parse("3"));
+        assertEquals(result.simplify(x4), Expression.parse("3"));
+        assertEquals(result.simplify(x5), Expression.parse("3"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusxWithSingleAssigmentToy(){
+        Expression expr = Expression.parse("x+x");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("0.0"));
+        assertEquals(result.simplify(x2), Expression.parse("0.2"));
+        assertEquals(result.simplify(x3), Expression.parse("1.0"));
+        assertEquals(result.simplify(x4), Expression.parse("2.0"));
+        assertEquals(result.simplify(x5), Expression.parse("4.0"));
+        assertEquals(result.simplify(x6), Expression.parse("6.0"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusxWithTwoAssigmentsTox_y(){
+        Expression expr = Expression.parse("x+x");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 2.0); env.put(Expression.parse("y"), 3.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("4.0"));
+        assertEquals(result.simplify(x2), Expression.parse("4.0"));
+        assertEquals(result.simplify(x3), Expression.parse("4.0"));
+        assertEquals(result.simplify(x4), Expression.parse("4.0"));
+        assertEquals(result.simplify(x5), Expression.parse("4.0"));
+        assertEquals(result.simplify(x6), Expression.parse("4.0"));
+    }
+    
+    @Test
+    public void testSimplify_xPlus0WithEmptyEnviroment(){
+        Expression expr = Expression.parse("x+0");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("0.0"));
+        assertEquals(result.simplify(x2), Expression.parse("0.1"));
+        assertEquals(result.simplify(x3), Expression.parse("0.5"));
+        assertEquals(result.simplify(x4), Expression.parse("1.0"));
+        assertEquals(result.simplify(x5), Expression.parse("2.0"));
+        assertEquals(result.simplify(x6), Expression.parse("3.0"));
+    }
+    
+    @Test
+    public void testSimplify_2PlusxWithEmptyEnviroment(){
+        Expression expr = Expression.parse("2+x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
+        
+        assertEquals(result.simplify(x1), Expression.parse("2.0"));
+        assertEquals(result.simplify(x2), Expression.parse("2.1"));
+        assertEquals(result.simplify(x3), Expression.parse("2.5"));
+        assertEquals(result.simplify(x4), Expression.parse("3.0"));
+        assertEquals(result.simplify(x5), Expression.parse("4.0"));
+        assertEquals(result.simplify(x6), Expression.parse("5.0"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusyWithEmptyEnviroment(){
+        Expression expr = Expression.parse("x+y");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 1.0); a2.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.0); a3.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 0.1); a4.put(Expression.parse("y"), 0.2);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 0.6); a5.put(Expression.parse("y"), 0.4);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 1.0); a6.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 3.0); a7.put(Expression.parse("y"), 4.5);
 
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("1.0"));
+        assertEquals(result.simplify(a3), Expression.parse("2.0"));
+        assertEquals(result.simplify(a4), Expression.parse("0.3"));
+        assertEquals(result.simplify(a5), Expression.parse("1.0"));
+        assertEquals(result.simplify(a6), Expression.parse("3.0"));
+        assertEquals(result.simplify(a7), Expression.parse("7.5"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusyWithSingleAssigmenttToy(){
+        Expression expr = Expression.parse("x+y");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.1"));
+        assertEquals(result.simplify(a3), Expression.parse("0.5"));
+        assertEquals(result.simplify(a4), Expression.parse("1.0"));
+        assertEquals(result.simplify(a5), Expression.parse("2.0"));
+        assertEquals(result.simplify(a6), Expression.parse("3.0"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusyWithTwoeAssigmenttTox_z(){
+        Expression expr = Expression.parse("x+y");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 0.5); env.put(Expression.parse("z"), 100.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("y"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("y"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.5"));
+        assertEquals(result.simplify(a2), Expression.parse("0.6"));
+        assertEquals(result.simplify(a3), Expression.parse("1.0"));
+        assertEquals(result.simplify(a4), Expression.parse("1.5"));
+        assertEquals(result.simplify(a5), Expression.parse("2.5"));
+        assertEquals(result.simplify(a6), Expression.parse("3.5"));
+    }
+    
+    @Test
+    public void testSimplify_0Times2WithEmptyEnvironment(){
+        Expression expr = Expression.parse("0*2");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.0"));
+        assertEquals(result.simplify(a3), Expression.parse("0.0"));
+        assertEquals(result.simplify(a4), Expression.parse("0.0"));
+        assertEquals(result.simplify(a5), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+    }
+    
+    @Test
+    public void testSimplify_1Times3WithEmptyEnvironment(){
+        Expression expr = Expression.parse("1*3");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("3"));
+        assertEquals(result.simplify(a2), Expression.parse("3"));
+        assertEquals(result.simplify(a3), Expression.parse("3"));
+        assertEquals(result.simplify(a4), Expression.parse("3"));
+        assertEquals(result.simplify(a5), Expression.parse("3"));
+        assertEquals(result.simplify(a6), Expression.parse("3"));
+    }
+    
+    @Test
+    public void testSimplify_2Times5WithEmptyEnvironment(){
+        Expression expr = Expression.parse("2*5");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("10"));
+        assertEquals(result.simplify(a2), Expression.parse("10"));
+        assertEquals(result.simplify(a3), Expression.parse("10"));
+        assertEquals(result.simplify(a4), Expression.parse("10"));
+        assertEquals(result.simplify(a5), Expression.parse("10"));
+        assertEquals(result.simplify(a6), Expression.parse("10"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesxWithEmptyEnvironment(){
+        Expression expr = Expression.parse("x*x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.01"));
+        assertEquals(result.simplify(a3), Expression.parse("0.25"));
+        assertEquals(result.simplify(a4), Expression.parse("1.0"));
+        assertEquals(result.simplify(a5), Expression.parse("4.0"));
+        assertEquals(result.simplify(a6), Expression.parse("9.0"));
+        assertEquals(result.simplify(a6), Expression.parse("16.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes0WithEmptyEnvironment(){
+        Expression expr = Expression.parse("x*0");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.0"));
+        assertEquals(result.simplify(a3), Expression.parse("0.0"));
+        assertEquals(result.simplify(a4), Expression.parse("0.0"));
+        assertEquals(result.simplify(a5), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+    }
+    
+    @Test
+    public void testSimplify_1TimesxWithEmptyEnvironment(){
+        Expression expr = Expression.parse("1*x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.1"));
+        assertEquals(result.simplify(a3), Expression.parse("0.5"));
+        assertEquals(result.simplify(a4), Expression.parse("1.0"));
+        assertEquals(result.simplify(a5), Expression.parse("2.0"));
+        assertEquals(result.simplify(a6), Expression.parse("3.0"));
+        assertEquals(result.simplify(a6), Expression.parse("4.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesyWithEmptyEnvironment(){
+        Expression expr = Expression.parse("x*y");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 2.0); a2.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 2.0); a3.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 0.5); a4.put(Expression.parse("y"), 0.1);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a5.put(Expression.parse("y"), 0.5);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("y"), 2.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.0"));
+        assertEquals(result.simplify(a3), Expression.parse("2.0"));
+        assertEquals(result.simplify(a4), Expression.parse("0.05"));
+        assertEquals(result.simplify(a5), Expression.parse("1.0"));
+        assertEquals(result.simplify(a6), Expression.parse("6.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesyWithSingleAssignmentToy(){
+        Expression expr = Expression.parse("x*y");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 1.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.1"));
+        assertEquals(result.simplify(a3), Expression.parse("0.5"));
+        assertEquals(result.simplify(a4), Expression.parse("1.0"));
+        assertEquals(result.simplify(a5), Expression.parse("2.0"));
+        assertEquals(result.simplify(a6), Expression.parse("3.0"));
+        assertEquals(result.simplify(a6), Expression.parse("4.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesyWithTwoAssigmenttTox_z(){
+        Expression expr = Expression.parse("x*y");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 2.0); env.put(Expression.parse("z"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("y"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("y"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.2"));
+        assertEquals(result.simplify(a3), Expression.parse("1.0"));
+        assertEquals(result.simplify(a4), Expression.parse("2.0"));
+        assertEquals(result.simplify(a5), Expression.parse("4.0"));
+        assertEquals(result.simplify(a6), Expression.parse("6.0"));
+        assertEquals(result.simplify(a6), Expression.parse("8.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesyWithSingleAssignmentTox(){
+        Expression expr = Expression.parse("x*y");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("y"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("y"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.0"));
+        assertEquals(result.simplify(a3), Expression.parse("0.0"));
+        assertEquals(result.simplify(a4), Expression.parse("0.0"));
+        assertEquals(result.simplify(a5), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_xPlusxWithEmptyEnviroment(){
+        Expression expr = Expression.parse("x*(x+x)");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.02"));
+        assertEquals(result.simplify(a3), Expression.parse("0.5"));
+        assertEquals(result.simplify(a4), Expression.parse("2.0"));
+        assertEquals(result.simplify(a5), Expression.parse("8.0"));
+        assertEquals(result.simplify(a6), Expression.parse("18.0"));
+        assertEquals(result.simplify(a6), Expression.parse("32.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_xPlusyWithxAssigned0(){
+        Expression expr = Expression.parse("x*(x+y)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("y"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("y"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.0"));
+        assertEquals(result.simplify(a3), Expression.parse("0.0"));
+        assertEquals(result.simplify(a4), Expression.parse("0.0"));
+        assertEquals(result.simplify(a5), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_xPlusyWithEmptyEnvironment(){
+        Expression expr = Expression.parse("x*(x+y)");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1); a2.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); a3.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0); a4.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a5.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("y"), 0.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.01"));
+        assertEquals(result.simplify(a3), Expression.parse("0.25"));
+        assertEquals(result.simplify(a4), Expression.parse("1.0"));
+        assertEquals(result.simplify(a5), Expression.parse("4.0"));
+        assertEquals(result.simplify(a6), Expression.parse("9.0"));
+        assertEquals(result.simplify(a6), Expression.parse("16.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_xPlusyWithyAssigned0(){
+        Expression expr = Expression.parse("x*(x+y)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 0.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.01"));
+        assertEquals(result.simplify(a3), Expression.parse("0.25"));
+        assertEquals(result.simplify(a4), Expression.parse("1.0"));
+        assertEquals(result.simplify(a5), Expression.parse("4.0"));
+        assertEquals(result.simplify(a6), Expression.parse("9.0"));
+        assertEquals(result.simplify(a6), Expression.parse("16.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_xPlusyWithxAssigned1(){
+        Expression expr = Expression.parse("x*(x+y)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 1.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("y"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("y"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("y"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("y"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1.0"));
+        assertEquals(result.simplify(a2), Expression.parse("1.1"));
+        assertEquals(result.simplify(a3), Expression.parse("1.5"));
+        assertEquals(result.simplify(a4), Expression.parse("2.0"));
+        assertEquals(result.simplify(a5), Expression.parse("3.0"));
+        assertEquals(result.simplify(a6), Expression.parse("4.0"));
+        assertEquals(result.simplify(a6), Expression.parse("5.0"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_yPlusyWithyAssignedHalf(){
+        Expression expr = Expression.parse("x*(y+y)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 0.5);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.1"));
+        assertEquals(result.simplify(a3), Expression.parse("0.5"));
+        assertEquals(result.simplify(a4), Expression.parse("1"));
+        assertEquals(result.simplify(a5), Expression.parse("2"));
+        assertEquals(result.simplify(a6), Expression.parse("3"));
+        assertEquals(result.simplify(a6), Expression.parse("4"));
+    }
+    
+    @Test
+    public void testSimplify_zPlusy_timesxWithEmptyEnvironment(){
+        Expression expr = Expression.parse("(z+y)*x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("z"), 2.0); a1.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1); a2.put(Expression.parse("z"), 2.0); a2.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); a3.put(Expression.parse("z"), 2.0); a3.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0); a4.put(Expression.parse("z"), 2.0); a4.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a5.put(Expression.parse("z"), 2.0); a5.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("z"), 2.0); a6.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("z"), 2.0); a7.put(Expression.parse("y"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.5"));
+        assertEquals(result.simplify(a3), Expression.parse("2.5"));
+        assertEquals(result.simplify(a4), Expression.parse("5"));
+        assertEquals(result.simplify(a5), Expression.parse("10"));
+        assertEquals(result.simplify(a6), Expression.parse("15"));
+        assertEquals(result.simplify(a6), Expression.parse("20"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesy_Plus_zTimesxEmptyEnviroment(){
+        Expression expr = Expression.parse("x*y + z*x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("z"), 2.0); a1.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1); a2.put(Expression.parse("z"), 2.0); a2.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); a3.put(Expression.parse("z"), 2.0); a3.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0); a4.put(Expression.parse("z"), 2.0); a4.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a5.put(Expression.parse("z"), 2.0); a5.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("z"), 2.0); a6.put(Expression.parse("y"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("z"), 2.0); a7.put(Expression.parse("y"), 3.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.5"));
+        assertEquals(result.simplify(a3), Expression.parse("2.5"));
+        assertEquals(result.simplify(a4), Expression.parse("5"));
+        assertEquals(result.simplify(a5), Expression.parse("10"));
+        assertEquals(result.simplify(a6), Expression.parse("15"));
+        assertEquals(result.simplify(a6), Expression.parse("20"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesy_Plus_zTimesxWithAssigmentsToy_z(){
+        Expression expr = Expression.parse("x*y + z*x");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("0.0"));
+        assertEquals(result.simplify(a2), Expression.parse("0.5"));
+        assertEquals(result.simplify(a3), Expression.parse("2.5"));
+        assertEquals(result.simplify(a4), Expression.parse("5"));
+        assertEquals(result.simplify(a5), Expression.parse("10"));
+        assertEquals(result.simplify(a6), Expression.parse("15"));
+        assertEquals(result.simplify(a6), Expression.parse("20"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusy_Times_xPlusyWithEmptyEnvironment(){
+        Expression expr = Expression.parse("(x+y)*(x+y)");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); a1.put(Expression.parse("y"), 1.0); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a1.put(Expression.parse("y"), 1.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1"));
+        assertEquals(result.simplify(a2), Expression.parse("1.21"));
+        assertEquals(result.simplify(a3), Expression.parse("2.25"));
+        assertEquals(result.simplify(a4), Expression.parse("4"));
+        assertEquals(result.simplify(a5), Expression.parse("9"));
+        assertEquals(result.simplify(a6), Expression.parse("16"));
+        assertEquals(result.simplify(a6), Expression.parse("25"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusy_Times_xPlusyWithyAssigned1(){
+        Expression expr = Expression.parse("(x+y)*(x+y)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 1.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1"));
+        assertEquals(result.simplify(a2), Expression.parse("1.21"));
+        assertEquals(result.simplify(a3), Expression.parse("2.25"));
+        assertEquals(result.simplify(a4), Expression.parse("4"));
+        assertEquals(result.simplify(a5), Expression.parse("9"));
+        assertEquals(result.simplify(a6), Expression.parse("16"));
+        assertEquals(result.simplify(a6), Expression.parse("25"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesx_Plus_2TimesxTimesy_Plus_yTimesyWithEmptyEnvironment(){
+        Expression expr = Expression.parse("x*x + 2*x*y + y*y");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); a1.put(Expression.parse("y"), 1.0); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a1.put(Expression.parse("y"), 1.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a1.put(Expression.parse("y"), 1.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1"));
+        assertEquals(result.simplify(a2), Expression.parse("1.21"));
+        assertEquals(result.simplify(a3), Expression.parse("2.25"));
+        assertEquals(result.simplify(a4), Expression.parse("4"));
+        assertEquals(result.simplify(a5), Expression.parse("9"));
+        assertEquals(result.simplify(a6), Expression.parse("16"));
+        assertEquals(result.simplify(a6), Expression.parse("25"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesx_Plus_2TimesxTimesy_Plus_yTimesyAssigned1(){
+        Expression expr = Expression.parse("x*x + 2*x*y + y*y");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("y"), 1.0);
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1"));
+        assertEquals(result.simplify(a2), Expression.parse("1.21"));
+        assertEquals(result.simplify(a3), Expression.parse("2.25"));
+        assertEquals(result.simplify(a4), Expression.parse("4"));
+        assertEquals(result.simplify(a5), Expression.parse("9"));
+        assertEquals(result.simplify(a6), Expression.parse("16"));
+        assertEquals(result.simplify(a6), Expression.parse("25"));
+    }
+    
+    @Test
+    public void testSimplify_xPlus1_Times_xPlus1WithEmptyEnvironment(){
+        Expression expr = Expression.parse("(x+1)*(x+1)");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1"));
+        assertEquals(result.simplify(a2), Expression.parse("1.21"));
+        assertEquals(result.simplify(a3), Expression.parse("2.25"));
+        assertEquals(result.simplify(a4), Expression.parse("4"));
+        assertEquals(result.simplify(a5), Expression.parse("9"));
+        assertEquals(result.simplify(a6), Expression.parse("16"));
+        assertEquals(result.simplify(a6), Expression.parse("25"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesx_Plus_2Timesx_Plus1WithEmptyEnvironment(){
+        Expression expr = Expression.parse("x*x + 2*x + 1");
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = expr.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+
+        assertEquals(result.simplify(a1), Expression.parse("1"));
+        assertEquals(result.simplify(a2), Expression.parse("1.21"));
+        assertEquals(result.simplify(a3), Expression.parse("2.25"));
+        assertEquals(result.simplify(a4), Expression.parse("4"));
+        assertEquals(result.simplify(a5), Expression.parse("9"));
+        assertEquals(result.simplify(a6), Expression.parse("16"));
+        assertEquals(result.simplify(a6), Expression.parse("25"));
+    }
+    
+    @Test
+    public void testSimplify_xTimes_yTimeszWithAllVariablesAssigned(){
+        Expression expr = Expression.parse("x*(y*z)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 3.0); env.put(Expression.parse("y"), 4.0); env.put(Expression.parse("y"), 5.0);
+        
+        Expression result = expr.simplify(env);
+        
+        assertEquals(result, Expression.parse("60"));
+    }
+    
+    @Test
+    public void testSimplify_xTimesy_TimeszWithAllVariablesAssigned(){
+        Expression expr = Expression.parse("(x*y)*z");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 3.0); env.put(Expression.parse("y"), 4.0); env.put(Expression.parse("y"), 5.0);
+        
+        Expression result = expr.simplify(env);
+        
+        assertEquals(result, Expression.parse("60"));
+    }
+    
+    @Test
+    public void testSimplify_xPlus_yPluszWithAllVariablesAssigned(){
+        Expression expr = Expression.parse("x+(y+z)");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 3.0); env.put(Expression.parse("y"), 4.0); env.put(Expression.parse("y"), 5.0);
+        
+        Expression result = expr.simplify(env);
+        
+        assertEquals(result, Expression.parse("12"));
+    }
+    
+    @Test
+    public void testSimplify_xPlusy_PluszWithAllVariablesAssigned(){
+        Expression expr = Expression.parse("(x+y)+z");
+        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 3.0); env.put(Expression.parse("y"), 4.0); env.put(Expression.parse("y"), 5.0);
+        
+        Expression result = expr.simplify(env);
+        
+        assertEquals(result, Expression.parse("12"));
+    }
 }

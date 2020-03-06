@@ -1,5 +1,7 @@
 package expressivo;
 
+import java.util.Map;
+
 public class Sum implements Expression {
     private final Expression left;
     private final Expression right;
@@ -39,5 +41,10 @@ public class Sum implements Expression {
     @Override
     public Expression differentiate(Expression x) {
         return new Sum(left.differentiate(x), right.differentiate(x));
+    }
+    
+    @Override
+    public Expression simplify(Map<Expression, Double> environment) {
+        throw new RuntimeException("not implemented");
     }
 }
