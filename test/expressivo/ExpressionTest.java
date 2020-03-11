@@ -1960,16 +1960,16 @@ public class ExpressionTest {
     public void testVariableObservers_VaraibleName_a(){
         Expression a1 = Expression.parse("a");
         
-        assertFalse(a1.isVariable());
+        assertTrue(a1.isVariable());
         assertEquals("a", a1.getName());
     }
     
     @Test
-    public void testVariableObservers_VaraibleName_A(){
+    public void testVariableObservers_VariableName_A(){
         Expression a1 = Expression.parse("A");
         
-        assertFalse(a1.isVariable());
-        assertEquals("a", a1.getName());
+        assertTrue(a1.isVariable());
+        assertEquals("A", a1.getName());
     }
     
     @Test (expected = UnsupportedOperationException.class)
@@ -2100,7 +2100,7 @@ public class ExpressionTest {
     public void testProductObservers_2Times3(){
         Expression a1 = Expression.parse("2*3");
         
-        assertFalse(a1.isProduct());
+        assertTrue(a1.isProduct());
         assertEquals(Expression.parse("2"), a1.getLeftExpression());
         assertEquals(Expression.parse("3"), a1.getRightExpression());
     }
@@ -2109,7 +2109,7 @@ public class ExpressionTest {
     public void testProductObservers_aTimesb(){
         Expression a1 = Expression.parse("a*b");
         
-        assertFalse(a1.isProduct());
+        assertTrue(a1.isProduct());
         assertEquals(Expression.parse("a"), a1.getLeftExpression());
         assertEquals(Expression.parse("b"), a1.getRightExpression());
     }

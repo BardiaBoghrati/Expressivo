@@ -53,50 +53,42 @@ public class Number implements Expression {
 
     @Override
     public boolean isNumber() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public double getValue() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return 0;
+        return number;
     }
 
     @Override
     public boolean isVariable() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public String getName() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("operation is undedfined on numbers");
     }
 
     @Override
     public boolean isSum() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean isProduct() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public Expression getLeftExpression() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("operation is undedfined on numbers");
     }
 
     @Override
     public Expression getRightExpression() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException("operation is undedfined on numbers");
     }
     
 }
