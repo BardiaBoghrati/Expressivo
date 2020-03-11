@@ -1896,4 +1896,240 @@ public class ExpressionTest {
         
         assertEquals(result, Expression.parse("12"));
     }
+    
+    
+    
+    @Test
+    public void testNumberObservers_Integer(){
+        Expression a1 = Expression.parse("2");
+        
+        assertTrue(a1.isNumber());
+        assertTrue(a1.getValue() == 2.0);
+    }
+    
+    @Test
+    public void testNumberObservers_Decimal(){
+        Expression a1 = Expression.parse("0.00001");
+        
+        assertTrue(a1.isNumber());
+        assertTrue(a1.getValue() == 0.00001);
+    }
+    
+    @Test(expected = UnsupportedOperationException.class)
+    public void testNumberObservers_Variable(){
+        Expression a1 = Expression.parse("x");
+        
+        assertFalse(a1.isNumber());
+        a1.getValue();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testNumberObservers_NumberPlusNumber(){
+        Expression a1 = Expression.parse("2+3");
+        
+        assertFalse(a1.isNumber());
+        a1.getValue();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testNumberObservers_VariablePlusVariable(){
+        Expression a1 = Expression.parse("a+b");
+        
+        assertFalse(a1.isNumber());
+        a1.getValue();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testNumberObservers_NumberTimesNumber(){
+        Expression a1 = Expression.parse("2*3");
+        
+        assertFalse(a1.isNumber());
+        a1.getValue();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testNumberObservers_VariableTimesVariable(){
+        Expression a1 = Expression.parse("a*b");
+        
+        assertFalse(a1.isNumber());
+        a1.getValue();
+    }
+    
+    
+    @Test
+    public void testVariableObservers_VaraibleName_a(){
+        Expression a1 = Expression.parse("a");
+        
+        assertFalse(a1.isVariable());
+        assertEquals("a", a1.getName());
+    }
+    
+    @Test
+    public void testVariableObservers_VaraibleName_A(){
+        Expression a1 = Expression.parse("A");
+        
+        assertFalse(a1.isVariable());
+        assertEquals("a", a1.getName());
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testVariableObservers_Number(){
+        Expression a1 = Expression.parse("2.2");
+        
+        assertFalse(a1.isVariable());
+        a1.getName();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testVariableObservers_aPlus0(){
+        Expression a1 = Expression.parse("a+0");
+        
+        assertFalse(a1.isVariable());
+        a1.getName();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testVariableObservers_a_Plus_a(){
+        Expression a1 = Expression.parse("a+a");
+        
+        assertFalse(a1.isVariable());
+        a1.getName();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testVariableObservers_1_Times_a(){
+        Expression a1 = Expression.parse("1*a");
+        
+        assertFalse(a1.isVariable());
+        a1.getName();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testVariableObservers_a_Times_a(){
+        Expression a1 = Expression.parse("a*a");
+        
+        assertFalse(a1.isVariable());
+        a1.getName();
+    }
+    
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testSumObservers_Number(){
+        Expression a1 = Expression.parse("1");
+        
+        assertFalse(a1.isSum());
+        a1.getLeftExpression();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testSumObservers_Variable(){
+        Expression a1 = Expression.parse("x");
+        
+        assertFalse(a1.isSum());
+        a1.getRightExpression();
+    }
+    
+    @Test
+    public void testSumObservers_2Plus3(){
+        Expression a1 = Expression.parse("2+3");
+        
+        assertTrue(a1.isSum());
+        assertEquals(Expression.parse("2"), a1.getLeftExpression());
+        assertEquals(Expression.parse("3"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testSumObservers_aPlusb(){
+        Expression a1 = Expression.parse("a+b");
+        
+        assertTrue(a1.isSum());
+        assertEquals(Expression.parse("a"), a1.getLeftExpression());
+        assertEquals(Expression.parse("b"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testSumObservers_aPlusb_Plus_cPlusd(){
+        Expression a1 = Expression.parse("(a+b)+(c+d)");
+        
+        assertTrue(a1.isSum());
+        assertEquals(Expression.parse("a+b"), a1.getLeftExpression());
+        assertEquals(Expression.parse("c+d"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testSumObservers_aTimes_Plus_cTimesd(){
+        Expression a1 = Expression.parse("(a*b)+(c*d)");
+        
+        assertTrue(a1.isSum());
+        assertEquals(Expression.parse("a*b"), a1.getLeftExpression());
+        assertEquals(Expression.parse("c*d"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testSumObservers_a_Times_b(){
+        Expression a1 = Expression.parse("a*b");
+        
+        assertFalse(a1.isSum());
+    }
+    
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testProductObservers_Number(){
+        Expression a1 = Expression.parse("1.5");
+        
+        assertFalse(a1.isProduct());
+        a1.getRightExpression();
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void testProductObservers_Variable(){
+        Expression a1 = Expression.parse("a");
+        
+        assertFalse(a1.isProduct());
+        a1.getLeftExpression();
+    }
+    
+    @Test
+    public void testProductObservers_aPlusb(){
+        Expression a1 = Expression.parse("a+b");
+        
+        assertFalse(a1.isProduct());
+    }
+    
+    @Test
+    public void testProductObservers_2Times3(){
+        Expression a1 = Expression.parse("2*3");
+        
+        assertFalse(a1.isProduct());
+        assertEquals(Expression.parse("2"), a1.getLeftExpression());
+        assertEquals(Expression.parse("3"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testProductObservers_aTimesb(){
+        Expression a1 = Expression.parse("a*b");
+        
+        assertFalse(a1.isProduct());
+        assertEquals(Expression.parse("a"), a1.getLeftExpression());
+        assertEquals(Expression.parse("b"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testSumObservers_aPlusb_Times_cPlusd(){
+        Expression a1 = Expression.parse("(a+b)*(c+d)");
+        
+        assertTrue(a1.isProduct());
+        assertEquals(Expression.parse("a+b"), a1.getLeftExpression());
+        assertEquals(Expression.parse("c+d"), a1.getRightExpression());
+    }
+    
+    @Test
+    public void testSumObservers_aTimes_Times_cTimesd(){
+        Expression a1 = Expression.parse("(a*b)*(c*d)");
+        
+        assertTrue(a1.isProduct());
+        assertEquals(Expression.parse("a*b"), a1.getLeftExpression());
+        assertEquals(Expression.parse("c*d"), a1.getRightExpression());
+    }
+    
 }

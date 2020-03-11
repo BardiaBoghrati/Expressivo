@@ -132,4 +132,59 @@ public interface Expression {
      */
     public Expression simplify(Map<Expression, Double> environment);
     
+    /**
+     * Indicates whether this expression represents a number.
+     * @return true iff. this expression represents a number.
+     */
+    public boolean isNumber();
+    
+    /**
+     * Gets the numerical value of an expression representing a single number.
+     * @return numeric value of this expression if it represents a number.
+     * @throws UnsupportedOperationException if this expression does not represent a number.
+     */
+    public double getValue() throws UnsupportedOperationException;
+    
+    /**
+     * Indicates whether this expression represents a single variable.
+     * @return true iff. this expression represents a variable.
+     */
+    public boolean isVariable();
+    
+    /**
+     * Gets the name associated with the expression if it represents a single variable.
+     * @return name of this expression if it represents a single variable.
+     * @throws UnsupportedOperationException if this expression does not represent a variable.
+     */
+    public String getName() throws UnsupportedOperationException;
+    
+    /**
+     * Indicates whether this expression represents a sum, that is, it's of form expression1 + expresssion2.
+     * @return true iff. this expression represents a sum.
+     */
+    public boolean isSum();
+    
+    /**
+     * Indicates whether this expression represents a product, that is, it's of form expression1 * expresssion2.
+     * @return true iff. this expression represents a product.
+     */
+    public boolean isProduct();
+    
+    /**
+     * Gets the left expression in a sum or product expression.
+     * In case of sum expression, left + right, returns left.
+     * In case of product expression, left * right returns left.
+     * @return left expression in a sum or product expression.
+     * @throws UnsupportedOperationException if this expression is not a sum or product (is a number or variable)
+     */
+    public Expression getLeftExpression() throws UnsupportedOperationException;
+    
+    /**
+     * Gets the right expression in a sum or product expression.
+     * In case of sum expression, left + right, returns right.
+     * In case of product expression, left * right returns right.
+     * @return right expression in a sum or product expression.
+     * @throws UnsupportedOperationException if this expression is not a sum or product (is a number or variable)
+     */
+    public Expression getRightExpression() throws UnsupportedOperationException;
 }

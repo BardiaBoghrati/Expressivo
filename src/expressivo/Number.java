@@ -50,5 +50,53 @@ public class Number implements Expression {
     public Expression simplify(Map<Expression, Double> environment) {
         throw new RuntimeException("not implemented");
     }
+
+    @Override
+    public boolean isNumber() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public double getValue() throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isVariable() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String getName() throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isSum() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isProduct() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Expression getLeftExpression() throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Expression getRightExpression() throws UnsupportedOperationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
 }
