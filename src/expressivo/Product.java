@@ -45,7 +45,26 @@ public class Product implements Expression {
 
     @Override
     public Expression simplify(Map<Expression, Double> environment) {
-        throw new RuntimeException("not implemented");
+        final Expression simplifiedLeft = left.simplify(environment);
+        final Expression simplifiedRight = right.simplify(environment);
+        
+        if(simplifiedLeft.isNumber() && simplifiedRight.isNumber()){
+            return new Number(simplifiedLeft.getValue() * simplifiedRight.getValue());
+        }else if(simplifiedLeft.isNumber()){
+            if(simplifiedLeft.getValue() == 0){
+                return simplifiedLeft; //return 0
+            }else if(simplifiedLeft.getValue() == 1){
+                return simplifiedRight;
+            }
+        }else if(simplifiedRight.isNumber()){
+            if(simplifiedRight.getValue() == 0){
+                return simplifiedRight; //return 0
+            }else if(simplifiedRight.getValue() == 1){
+                return simplifiedLeft;
+            }
+        }
+        
+        return new Product(simplifiedLeft, simplifiedRight);
     }
 
     @Override

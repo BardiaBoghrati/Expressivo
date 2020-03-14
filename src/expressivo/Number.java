@@ -48,7 +48,7 @@ public class Number implements Expression {
     
     @Override
     public Expression simplify(Map<Expression, Double> environment) {
-        throw new RuntimeException("not implemented");
+        return this;
     }
 
     @Override

@@ -52,7 +52,11 @@ public class Variable implements Expression {
     
     @Override
     public Expression simplify(Map<Expression, Double> environment) {
-        throw new RuntimeException("not implemented");
+        if(environment.containsKey(this)){
+            return new Number(environment.get(this));
+        }
+        
+        return this;
     }
 
     @Override
