@@ -18,6 +18,13 @@ public class ExpressionTest {
     // Testing strategy
     //   TODO
     
+    //TODO should all methods be tested on expression returned by every producer?
+    //TODO write test cases for hashcode of +/* two large integer values
+    //TODO should I test evaluation of test cases containing numbers largely differing in magnitude?
+    
+    //EPSILON determines the precision with which double values are compared.
+    private static final double EPSILON = 0.0;
+    
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
         assert false; // make sure assertions are enabled with VM argument: -ea
@@ -398,7 +405,7 @@ public class ExpressionTest {
     public void testHashCodeFor_Variable_Plus_Variable(){
         Expression a1 = Expression.parse("a+b");
         Expression a2 = Expression.parse("((a)+(b))");
-        
+
         assertEquals(a1.hashCode(), a2.hashCode());
     }
     
@@ -463,6 +470,24 @@ public class ExpressionTest {
         Expression a1 = Expression.parse("1 + a * 0.5");
         Expression a2 = Expression.parse("1 + (a * 0.5)");
         
+        assertEquals(a1.hashCode(), a2.hashCode());
+    }
+
+    @Test
+    public void testHashCodeFor_LargeNumber(){
+        Expression a1 = Expression.parse("1000000000");
+        Expression a2 = Expression.parse("1000*1000*1000").simplify(new HashMap<>());
+        
+        assertEquals(a1, a2);
+        assertEquals(a1.hashCode(), a2.hashCode());
+    }
+    
+    @Test
+    public void testHashCodeFor_SmallNumber(){
+        Expression a1 = Expression.parse("0.0000152587890625");
+        Expression a2 = Expression.parse("0.0625*0.0625*0.0625*0.0625").simplify(new HashMap<>());
+        
+        assertEquals(a1, a2);
         assertEquals(a1.hashCode(), a2.hashCode());
     }
     
@@ -545,6 +570,25 @@ public class ExpressionTest {
         Expression a1 = Expression.parse("a*(b*c)");
         Expression a2 = Expression.parse("((a*(b*c)))");
         
+        assertEquals(Expression.parse(a1.toString()), a1);
+        assertEquals(a1.toString(), a2.toString());
+    }
+    
+    @Test
+    public void testToStringFor_LargeNumber(){
+        Expression a1 = Expression.parse("1000000000000");
+        Expression a2 = Expression.parse("10000*10000*10000").simplify(new HashMap<>());;
+        
+        assertEquals(Expression.parse(a1.toString()), a1);
+        assertEquals(a1.toString(), a2.toString());
+    }
+    
+    @Test
+    public void testToStringFor_SmallNumber(){
+        Expression a1 = Expression.parse("0.000000000001");
+        Expression a2 = Expression.parse("0.0001*0.0001*0.0001").simplify(new HashMap<>());;
+        
+        assertEquals(a1, a2); //If this assertion is false try another two expression that evaluate to == double values
         assertEquals(Expression.parse(a1.toString()), a1);
         assertEquals(a1.toString(), a2.toString());
     }
@@ -997,16 +1041,19 @@ public class ExpressionTest {
         Expression result = expr.simplify(env);
         
         Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
-        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
-        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
-        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
-        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("1"));
-        assertEquals(result.simplify(x2), Expression.parse("1"));
-        assertEquals(result.simplify(x3), Expression.parse("1"));
-        assertEquals(result.simplify(x4), Expression.parse("1"));
-        assertEquals(result.simplify(x5), Expression.parse("1"));
+        assertEquals(1.0, result.getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1017,16 +1064,19 @@ public class ExpressionTest {
         Expression result = expr.simplify(env);
         
         Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
-        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
-        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
-        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
-        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("1"));
-        assertEquals(result.simplify(x2), Expression.parse("1"));
-        assertEquals(result.simplify(x3), Expression.parse("1"));
-        assertEquals(result.simplify(x4), Expression.parse("1"));
-        assertEquals(result.simplify(x5), Expression.parse("1"));
+        assertEquals(1.0, result.getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1037,16 +1087,18 @@ public class ExpressionTest {
         Expression result = expr.simplify(env);
         
         Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
-        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
-        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
-        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
-        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("0.0"));
-        assertEquals(result.simplify(x2), Expression.parse("0.5"));
-        assertEquals(result.simplify(x3), Expression.parse("1.0"));
-        assertEquals(result.simplify(x4), Expression.parse("2.0"));
-        assertEquals(result.simplify(x5), Expression.parse("3.0"));
+        assertEquals(0.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(0.1, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(0.5, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(2.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(3.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1057,16 +1109,18 @@ public class ExpressionTest {
         Expression result = expr.simplify(env);
         
         Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
-        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
-        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
-        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
-        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("0.0"));
-        assertEquals(result.simplify(x2), Expression.parse("0.5"));
-        assertEquals(result.simplify(x3), Expression.parse("1.0"));
-        assertEquals(result.simplify(x4), Expression.parse("2.0"));
-        assertEquals(result.simplify(x5), Expression.parse("3.0"));
+        assertEquals(0.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(0.1, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(0.5, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(2.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(3.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1077,16 +1131,19 @@ public class ExpressionTest {
         Expression result = expr.simplify(env);
         
         Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
-        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
-        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
-        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
-        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("10.5"));
-        assertEquals(result.simplify(x2), Expression.parse("10.5"));
-        assertEquals(result.simplify(x3), Expression.parse("10.5"));
-        assertEquals(result.simplify(x4), Expression.parse("10.5"));
-        assertEquals(result.simplify(x5), Expression.parse("10.5"));
+        assertEquals(10.5, result.getValue(), EPSILON);
+        assertEquals(10.5, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(10.5, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(10.5, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(10.5, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(10.5, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(10.5, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1097,16 +1154,19 @@ public class ExpressionTest {
         Expression result = expr.simplify(env);
         
         Map<Expression, Double> x1 = new HashMap<>(); x1.put(Expression.parse("x"), 0.0);
-        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.5);
-        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 1.0);
-        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 2.0);
-        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> x2 = new HashMap<>(); x2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> x3 = new HashMap<>(); x3.put(Expression.parse("x"), 0.5);
+        Map<Expression, Double> x4 = new HashMap<>(); x4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("3"));
-        assertEquals(result.simplify(x2), Expression.parse("3"));
-        assertEquals(result.simplify(x3), Expression.parse("3"));
-        assertEquals(result.simplify(x4), Expression.parse("3"));
-        assertEquals(result.simplify(x5), Expression.parse("3"));
+        assertEquals(1.0+2.0, result.getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1123,12 +1183,12 @@ public class ExpressionTest {
         Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("0.0"));
-        assertEquals(result.simplify(x2), Expression.parse("0.2"));
-        assertEquals(result.simplify(x3), Expression.parse("1.0"));
-        assertEquals(result.simplify(x4), Expression.parse("2.0"));
-        assertEquals(result.simplify(x5), Expression.parse("4.0"));
-        assertEquals(result.simplify(x6), Expression.parse("6.0"));
+        assertEquals(0.0+0.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(0.1+0.1, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(0.5+0.5, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0+1.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(3.0+3.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1145,12 +1205,13 @@ public class ExpressionTest {
         Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("4.0"));
-        assertEquals(result.simplify(x2), Expression.parse("4.0"));
-        assertEquals(result.simplify(x3), Expression.parse("4.0"));
-        assertEquals(result.simplify(x4), Expression.parse("4.0"));
-        assertEquals(result.simplify(x5), Expression.parse("4.0"));
-        assertEquals(result.simplify(x6), Expression.parse("4.0"));
+        assertEquals(2.0+2.0, result.getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1167,12 +1228,12 @@ public class ExpressionTest {
         Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("0.0"));
-        assertEquals(result.simplify(x2), Expression.parse("0.1"));
-        assertEquals(result.simplify(x3), Expression.parse("0.5"));
-        assertEquals(result.simplify(x4), Expression.parse("1.0"));
-        assertEquals(result.simplify(x5), Expression.parse("2.0"));
-        assertEquals(result.simplify(x6), Expression.parse("3.0"));
+        assertEquals(0.0+0.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(0.1+0.0, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(0.5+0.0, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(1.0+0.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(2.0+0.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(3.0+0.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1189,12 +1250,12 @@ public class ExpressionTest {
         Map<Expression, Double> x5 = new HashMap<>(); x5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> x6 = new HashMap<>(); x6.put(Expression.parse("x"), 3.0);
         
-        assertEquals(result.simplify(x1), Expression.parse("2.0"));
-        assertEquals(result.simplify(x2), Expression.parse("2.1"));
-        assertEquals(result.simplify(x3), Expression.parse("2.5"));
-        assertEquals(result.simplify(x4), Expression.parse("3.0"));
-        assertEquals(result.simplify(x5), Expression.parse("4.0"));
-        assertEquals(result.simplify(x6), Expression.parse("5.0"));
+        assertEquals(2.0+0.0, result.simplify(x1).getValue(), EPSILON);
+        assertEquals(2.0+0.1, result.simplify(x2).getValue(), EPSILON);
+        assertEquals(2.0+0.5, result.simplify(x3).getValue(), EPSILON);
+        assertEquals(2.0+1.0, result.simplify(x4).getValue(), EPSILON);
+        assertEquals(2.0+2.0, result.simplify(x5).getValue(), EPSILON);
+        assertEquals(2.0+3.0, result.simplify(x6).getValue(), EPSILON);
     }
     
     @Test
@@ -1210,15 +1271,15 @@ public class ExpressionTest {
         Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 0.1); a4.put(Expression.parse("y"), 0.2);
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 0.6); a5.put(Expression.parse("y"), 0.4);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 1.0); a6.put(Expression.parse("y"), 2.0);
-        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 3.0); a7.put(Expression.parse("y"), 4.5);
-
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("1.0"));
-        assertEquals(result.simplify(a3), Expression.parse("2.0"));
-        assertEquals(result.simplify(a4), Expression.parse("0.3"));
-        assertEquals(result.simplify(a5), Expression.parse("1.0"));
-        assertEquals(result.simplify(a6), Expression.parse("3.0"));
-        assertEquals(result.simplify(a7), Expression.parse("7.5"));
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 3.0); a7.put(Expression.parse("y"), 4.1);
+        
+        assertEquals(0.0+0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(1.0+0.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.0+2.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(0.1+0.2, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(0.6+0.4, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(1.0+2.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(3.0+4.1, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1235,12 +1296,12 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.1"));
-        assertEquals(result.simplify(a3), Expression.parse("0.5"));
-        assertEquals(result.simplify(a4), Expression.parse("1.0"));
-        assertEquals(result.simplify(a5), Expression.parse("2.0"));
-        assertEquals(result.simplify(a6), Expression.parse("3.0"));
+        assertEquals(0.0+0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1+0.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5+0.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0+0.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0+0.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0+0.0, result.simplify(a6).getValue(), EPSILON);
     }
     
     @Test
@@ -1257,12 +1318,12 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("y"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.5"));
-        assertEquals(result.simplify(a2), Expression.parse("0.6"));
-        assertEquals(result.simplify(a3), Expression.parse("1.0"));
-        assertEquals(result.simplify(a4), Expression.parse("1.5"));
-        assertEquals(result.simplify(a5), Expression.parse("2.5"));
-        assertEquals(result.simplify(a6), Expression.parse("3.5"));
+        assertEquals(0.5+0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.5+0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5+0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(0.5+1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(0.5+2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(0.5+3.0, result.simplify(a6).getValue(), EPSILON);
     }
     
     @Test
@@ -1279,12 +1340,13 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.0"));
-        assertEquals(result.simplify(a3), Expression.parse("0.0"));
-        assertEquals(result.simplify(a4), Expression.parse("0.0"));
-        assertEquals(result.simplify(a5), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(0.0*2.0, result.getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a6).getValue(), EPSILON);
     }
     
     @Test
@@ -1301,12 +1363,13 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("3"));
-        assertEquals(result.simplify(a2), Expression.parse("3"));
-        assertEquals(result.simplify(a3), Expression.parse("3"));
-        assertEquals(result.simplify(a4), Expression.parse("3"));
-        assertEquals(result.simplify(a5), Expression.parse("3"));
-        assertEquals(result.simplify(a6), Expression.parse("3"));
+        assertEquals(1.0*3.0, result.getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a6).getValue(), EPSILON);
     }
     
     @Test
@@ -1322,13 +1385,14 @@ public class ExpressionTest {
         Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
-
-        assertEquals(result.simplify(a1), Expression.parse("10"));
-        assertEquals(result.simplify(a2), Expression.parse("10"));
-        assertEquals(result.simplify(a3), Expression.parse("10"));
-        assertEquals(result.simplify(a4), Expression.parse("10"));
-        assertEquals(result.simplify(a5), Expression.parse("10"));
-        assertEquals(result.simplify(a6), Expression.parse("10"));
+        
+        assertEquals(2.0*5.0, result.getValue(), EPSILON);
+        assertEquals(2.0*5.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(2.0*5.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(2.0*5.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(2.0*5.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*5.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(2.0*5.0, result.simplify(a6).getValue(), EPSILON);
     }
     
     @Test
@@ -1346,13 +1410,14 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.01"));
-        assertEquals(result.simplify(a3), Expression.parse("0.25"));
-        assertEquals(result.simplify(a4), Expression.parse("1.0"));
-        assertEquals(result.simplify(a5), Expression.parse("4.0"));
-        assertEquals(result.simplify(a6), Expression.parse("9.0"));
-        assertEquals(result.simplify(a7), Expression.parse("16.0"));
+        assertEquals(0.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*4.0, result.simplify(a7).getValue(), EPSILON);
+        
     }
     
     @Test
@@ -1370,13 +1435,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.0"));
-        assertEquals(result.simplify(a3), Expression.parse("0.0"));
-        assertEquals(result.simplify(a4), Expression.parse("0.0"));
-        assertEquals(result.simplify(a5), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(0.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*0.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*0.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*0.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*0.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*0.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*0.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1394,13 +1459,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.1"));
-        assertEquals(result.simplify(a3), Expression.parse("0.5"));
-        assertEquals(result.simplify(a4), Expression.parse("1.0"));
-        assertEquals(result.simplify(a5), Expression.parse("2.0"));
-        assertEquals(result.simplify(a6), Expression.parse("3.0"));
-        assertEquals(result.simplify(a7), Expression.parse("4.0"));
+        assertEquals(1.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(1.0*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(1.0*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(1.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(1.0*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(1.0*4.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1417,12 +1482,12 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a5.put(Expression.parse("y"), 0.5);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("y"), 2.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.0"));
-        assertEquals(result.simplify(a3), Expression.parse("2.0"));
-        assertEquals(result.simplify(a4), Expression.parse("0.05"));
-        assertEquals(result.simplify(a5), Expression.parse("1.0"));
-        assertEquals(result.simplify(a6), Expression.parse("6.0"));
+        assertEquals(0.0*1.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(2.0*0.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(2.0*1.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(0.5*0.1, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*0.5, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*2.0, result.simplify(a6).getValue(), EPSILON);
     }
     
     @Test
@@ -1440,13 +1505,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.1"));
-        assertEquals(result.simplify(a3), Expression.parse("0.5"));
-        assertEquals(result.simplify(a4), Expression.parse("1.0"));
-        assertEquals(result.simplify(a5), Expression.parse("2.0"));
-        assertEquals(result.simplify(a6), Expression.parse("3.0"));
-        assertEquals(result.simplify(a7), Expression.parse("4.0"));
+        assertEquals(0.0*1.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*1.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*1.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*1.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*1.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*1.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1464,13 +1529,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.2"));
-        assertEquals(result.simplify(a3), Expression.parse("1.0"));
-        assertEquals(result.simplify(a4), Expression.parse("2.0"));
-        assertEquals(result.simplify(a5), Expression.parse("4.0"));
-        assertEquals(result.simplify(a6), Expression.parse("6.0"));
-        assertEquals(result.simplify(a7), Expression.parse("8.0"));
+        assertEquals(2.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(2.0*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(2.0*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(2.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(2.0*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(2.0*4.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1488,13 +1553,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.0"));
-        assertEquals(result.simplify(a3), Expression.parse("0.0"));
-        assertEquals(result.simplify(a4), Expression.parse("0.0"));
-        assertEquals(result.simplify(a5), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(0.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.0*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(0.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(0.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(0.0*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(0.0*4.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1511,14 +1576,14 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
-
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.02"));
-        assertEquals(result.simplify(a3), Expression.parse("0.5"));
-        assertEquals(result.simplify(a4), Expression.parse("2.0"));
-        assertEquals(result.simplify(a5), Expression.parse("8.0"));
-        assertEquals(result.simplify(a6), Expression.parse("18.0"));
-        assertEquals(result.simplify(a7), Expression.parse("32.0"));
+        
+        assertEquals(0.0*(0.0+0.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*(0.1+0.1), result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*(0.5+0.5), result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+1.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*(2.0+2.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*(3.0+3.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*(4.0+4.0), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1536,13 +1601,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.0"));
-        assertEquals(result.simplify(a3), Expression.parse("0.0"));
-        assertEquals(result.simplify(a4), Expression.parse("0.0"));
-        assertEquals(result.simplify(a5), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
-        assertEquals(result.simplify(a6), Expression.parse("0.0"));
+        assertEquals(0.0*(0.0+0.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*(0.0+0.1), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*(0.0+0.5), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*(0.0+1.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*(0.0+2.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*(0.0+3.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.0*(0.0+4.0), result.simplify(a1).getValue(), EPSILON);
     }
     
     @Test
@@ -1560,13 +1625,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("y"), 0.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("y"), 0.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.01"));
-        assertEquals(result.simplify(a3), Expression.parse("0.25"));
-        assertEquals(result.simplify(a4), Expression.parse("1.0"));
-        assertEquals(result.simplify(a5), Expression.parse("4.0"));
-        assertEquals(result.simplify(a6), Expression.parse("9.0"));
-        assertEquals(result.simplify(a7), Expression.parse("16.0"));
+        assertEquals(0.0*(0.0+0.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*(0.1+0.0), result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*(0.5+0.0), result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+0.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*(2.0+0.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*(3.0+0.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*(4.0+0.0), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1584,13 +1649,14 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.01"));
-        assertEquals(result.simplify(a3), Expression.parse("0.25"));
-        assertEquals(result.simplify(a4), Expression.parse("1.0"));
-        assertEquals(result.simplify(a5), Expression.parse("4.0"));
-        assertEquals(result.simplify(a6), Expression.parse("9.0"));
-        assertEquals(result.simplify(a7), Expression.parse("16.0"));
+        assertEquals(0.0*(0.0+0.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*(0.1+0.0), result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*(0.5+0.0), result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+0.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*(2.0+0.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*(3.0+0.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*(4.0+0.0), result.simplify(a7).getValue(), EPSILON);
+
     }
     
     @Test
@@ -1608,13 +1674,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("y"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("y"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("1.0"));
-        assertEquals(result.simplify(a2), Expression.parse("1.1"));
-        assertEquals(result.simplify(a3), Expression.parse("1.5"));
-        assertEquals(result.simplify(a4), Expression.parse("2.0"));
-        assertEquals(result.simplify(a5), Expression.parse("3.0"));
-        assertEquals(result.simplify(a6), Expression.parse("4.0"));
-        assertEquals(result.simplify(a7), Expression.parse("5.0"));
+        assertEquals(1.0*(1.0+0.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+0.1), result.simplify(a2).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+0.5), result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+1.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+2.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+3.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals(1.0*(1.0+4.0), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1632,13 +1698,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.1"));
-        assertEquals(result.simplify(a3), Expression.parse("0.5"));
-        assertEquals(result.simplify(a4), Expression.parse("1"));
-        assertEquals(result.simplify(a5), Expression.parse("2"));
-        assertEquals(result.simplify(a6), Expression.parse("3"));
-        assertEquals(result.simplify(a7), Expression.parse("4"));
+        assertEquals(0.0*(0.5+0.5), result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*(0.5+0.5), result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*(0.5+0.5), result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*(0.5+0.5), result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*(0.5+0.5), result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*(0.5+0.5), result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*(0.5+0.5), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1656,13 +1722,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("z"), 2.0); a6.put(Expression.parse("y"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("z"), 2.0); a7.put(Expression.parse("y"), 3.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.5"));
-        assertEquals(result.simplify(a3), Expression.parse("2.5"));
-        assertEquals(result.simplify(a4), Expression.parse("5"));
-        assertEquals(result.simplify(a5), Expression.parse("10"));
-        assertEquals(result.simplify(a6), Expression.parse("15"));
-        assertEquals(result.simplify(a7), Expression.parse("20"));
+        assertEquals((2.0+3.0)*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals((2.0+3.0)*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals((2.0+3.0)*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals((2.0+3.0)*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals((2.0+3.0)*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals((2.0+3.0)*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals((2.0+3.0)*4.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1680,13 +1746,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("z"), 2.0); a6.put(Expression.parse("y"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("z"), 2.0); a7.put(Expression.parse("y"), 3.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.5"));
-        assertEquals(result.simplify(a3), Expression.parse("2.5"));
-        assertEquals(result.simplify(a4), Expression.parse("5"));
-        assertEquals(result.simplify(a5), Expression.parse("10"));
-        assertEquals(result.simplify(a6), Expression.parse("15"));
-        assertEquals(result.simplify(a7), Expression.parse("20"));
+        assertEquals(0.0*2.0 + 3.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*2.0 + 3.0*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*2.0 + 3.0*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*2.0 + 3.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0 + 3.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*2.0 + 3.0*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*2.0 + 3.0*4.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1703,14 +1769,14 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
-
-        assertEquals(result.simplify(a1), Expression.parse("0.0"));
-        assertEquals(result.simplify(a2), Expression.parse("0.5"));
-        assertEquals(result.simplify(a3), Expression.parse("2.5"));
-        assertEquals(result.simplify(a4), Expression.parse("5"));
-        assertEquals(result.simplify(a5), Expression.parse("10"));
-        assertEquals(result.simplify(a6), Expression.parse("15"));
-        assertEquals(result.simplify(a7), Expression.parse("20"));
+        
+        assertEquals(0.0*2.0 + 3.0*0.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*2.0 + 3.0*0.1, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*2.0 + 3.0*0.5, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*2.0 + 3.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0 + 3.0*2.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*2.0 + 3.0*3.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*2.0 + 3.0*4.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1727,14 +1793,14 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0); a5.put(Expression.parse("y"), 1.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("y"), 1.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("y"), 1.0);
-
-        assertEquals(result.simplify(a1), Expression.parse("1"));
-        assertEquals(result.simplify(a2), Expression.parse("1.21"));
-        assertEquals(result.simplify(a3), Expression.parse("2.25"));
-        assertEquals(result.simplify(a4), Expression.parse("4"));
-        assertEquals(result.simplify(a5), Expression.parse("9"));
-        assertEquals(result.simplify(a6), Expression.parse("16"));
-        assertEquals(result.simplify(a7), Expression.parse("25"));
+        
+        assertEquals((0.0+1.0)*(0.0+1.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals((0.1+1.0)*(0.1+1.0), result.simplify(a2).getValue(), EPSILON);
+        assertEquals((0.5+1.0)*(0.5+1.0), result.simplify(a3).getValue(), EPSILON);
+        assertEquals((1.0+1.0)*(1.0+1.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals((2.0+1.0)*(2.0+1.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals((3.0+1.0)*(3.0+1.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals((4.0+1.0)*(4.0+1.0), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1752,13 +1818,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("1"));
-        assertEquals(result.simplify(a2), Expression.parse("1.21"));
-        assertEquals(result.simplify(a3), Expression.parse("2.25"));
-        assertEquals(result.simplify(a4), Expression.parse("4"));
-        assertEquals(result.simplify(a5), Expression.parse("9"));
-        assertEquals(result.simplify(a6), Expression.parse("16"));
-        assertEquals(result.simplify(a7), Expression.parse("25"));
+        assertEquals((0.0+1.0)*(0.0+1.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals((0.1+1.0)*(0.1+1.0), result.simplify(a2).getValue(), EPSILON);
+        assertEquals((0.5+1.0)*(0.5+1.0), result.simplify(a3).getValue(), EPSILON);
+        assertEquals((1.0+1.0)*(1.0+1.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals((2.0+1.0)*(2.0+1.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals((3.0+1.0)*(3.0+1.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals((4.0+1.0)*(4.0+1.0), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1776,13 +1842,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0); a6.put(Expression.parse("y"), 1.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0); a7.put(Expression.parse("y"), 1.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("1"));
-        assertEquals(result.simplify(a2), Expression.parse("1.21"));
-        assertEquals(result.simplify(a3), Expression.parse("2.25"));
-        assertEquals(result.simplify(a4), Expression.parse("4"));
-        assertEquals(result.simplify(a5), Expression.parse("9"));
-        assertEquals(result.simplify(a6), Expression.parse("16"));
-        assertEquals(result.simplify(a7), Expression.parse("25"));
+        assertEquals(0.0*0.0 + 2.0*0.0 + 1.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*0.1 + 2.0*0.1 + 1.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*0.5 + 2.0*0.5 + 1.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0 + 2.0*1.0 + 1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0 + 2.0*2.0 + 1.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*3.0 + 2.0*3.0 + 1.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*4.0 + 2.0*4.0 + 1.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1799,14 +1865,14 @@ public class ExpressionTest {
         Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
-
-        assertEquals(result.simplify(a1), Expression.parse("1"));
-        assertEquals(result.simplify(a2), Expression.parse("1.21"));
-        assertEquals(result.simplify(a3), Expression.parse("2.25"));
-        assertEquals(result.simplify(a4), Expression.parse("4"));
-        assertEquals(result.simplify(a5), Expression.parse("9"));
-        assertEquals(result.simplify(a6), Expression.parse("16"));
-        assertEquals(result.simplify(a7), Expression.parse("25"));
+        
+        assertEquals(0.0*0.0 + 2.0*0.0 + 1.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*0.1 + 2.0*0.1 + 1.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*0.5 + 2.0*0.5 + 1.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0 + 2.0*1.0 + 1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0 + 2.0*2.0 + 1.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*3.0 + 2.0*3.0 + 1.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*4.0 + 2.0*4.0 + 1.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1824,13 +1890,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("1"));
-        assertEquals(result.simplify(a2), Expression.parse("1.21"));
-        assertEquals(result.simplify(a3), Expression.parse("2.25"));
-        assertEquals(result.simplify(a4), Expression.parse("4"));
-        assertEquals(result.simplify(a5), Expression.parse("9"));
-        assertEquals(result.simplify(a6), Expression.parse("16"));
-        assertEquals(result.simplify(a7), Expression.parse("25"));
+        assertEquals((0.0+1.0)*(0.0+1.0), result.simplify(a1).getValue(), EPSILON);
+        assertEquals((0.1+1.0)*(0.1+1.0), result.simplify(a2).getValue(), EPSILON);
+        assertEquals((0.5+1.0)*(0.5+1.0), result.simplify(a3).getValue(), EPSILON);
+        assertEquals((1.0+1.0)*(1.0+1.0), result.simplify(a4).getValue(), EPSILON);
+        assertEquals((2.0+1.0)*(2.0+1.0), result.simplify(a5).getValue(), EPSILON);
+        assertEquals((3.0+1.0)*(3.0+1.0), result.simplify(a6).getValue(), EPSILON);
+        assertEquals((4.0+1.0)*(4.0+1.0), result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1848,13 +1914,13 @@ public class ExpressionTest {
         Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
         Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
 
-        assertEquals(result.simplify(a1), Expression.parse("1"));
-        assertEquals(result.simplify(a2), Expression.parse("1.21"));
-        assertEquals(result.simplify(a3), Expression.parse("2.25"));
-        assertEquals(result.simplify(a4), Expression.parse("4"));
-        assertEquals(result.simplify(a5), Expression.parse("9"));
-        assertEquals(result.simplify(a6), Expression.parse("16"));
-        assertEquals(result.simplify(a7), Expression.parse("25"));
+        assertEquals(0.0*0.0 + 2.0*0.0 + 1.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*0.1 + 2.0*0.1 + 1.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*0.5 + 2.0*0.5 + 1.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0 + 2.0*1.0 + 1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*2.0 + 2.0*2.0 + 1.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*3.0 + 2.0*3.0 + 1.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*4.0 + 2.0*4.0 + 1.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     @Test
@@ -1864,7 +1930,7 @@ public class ExpressionTest {
         
         Expression result = expr.simplify(env);
         
-        assertEquals(result, Expression.parse("60"));
+        assertEquals(3.0*(4.0*5.0), result.getValue(), EPSILON);
     }
     
     @Test
@@ -1874,27 +1940,71 @@ public class ExpressionTest {
         
         Expression result = expr.simplify(env);
         
-        assertEquals(result, Expression.parse("60"));
+        assertEquals((3.0*4.0)*5.0, result.getValue(), EPSILON);
     }
     
     @Test
     public void testSimplify_xPlus_yPluszWithAllVariablesAssigned(){
         Expression expr = Expression.parse("x+(y+z)");
-        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 3.0); env.put(Expression.parse("y"), 4.0); env.put(Expression.parse("z"), 5.0);
+        Map<Expression, Double> env = new HashMap<>();
+        env.put(Expression.parse("x"), 3.0);
+        env.put(Expression.parse("y"), 4.0);
+        env.put(Expression.parse("z"), 5.0);
         
         Expression result = expr.simplify(env);
         
-        assertEquals(result, Expression.parse("12"));
+        assertEquals(3.0+(4.0+5.0), result.getValue(), EPSILON);
     }
     
     @Test
     public void testSimplify_xPlusy_PluszWithAllVariablesAssigned(){
         Expression expr = Expression.parse("(x+y)+z");
-        Map<Expression, Double> env = new HashMap<>(); env.put(Expression.parse("x"), 3.0); env.put(Expression.parse("y"), 4.0); env.put(Expression.parse("z"), 5.0);
+        Map<Expression, Double> env = new HashMap<>();
+        env.put(Expression.parse("x"), 3.0);
+        env.put(Expression.parse("y"), 4.0);
+        env.put(Expression.parse("z"), 5.0);
         
         Expression result = expr.simplify(env);
         
-        assertEquals(result, Expression.parse("12"));
+        assertEquals((3.0+4.0)+5.0, result.getValue(), EPSILON);
+    }
+    
+    @Test
+    public void testSimplify_Differentiate_x_Plus_x_ThenSimplify(){
+        Expression expr = Expression.parse("x+x");
+        Expression x = Expression.parse("x");
+        Expression deriv = expr.differentiate(x);
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = deriv.simplify(env);
+        
+        assertEquals(1.0+1.0, result.getValue(), EPSILON);
+    }
+    
+    @Test
+    public void testSimplify_Differentiate_x_Times_x_ThenSimplify(){
+        Expression expr = Expression.parse("x*x");
+        Expression x = Expression.parse("x");
+        Expression deriv = expr.differentiate(x);
+        Map<Expression, Double> env = new HashMap<>();
+        
+        Expression result = deriv.simplify(env);
+        
+        Map<Expression, Double> a1 = new HashMap<>(); a1.put(Expression.parse("x"), 0.0);
+        Map<Expression, Double> a2 = new HashMap<>(); a2.put(Expression.parse("x"), 0.1);
+        Map<Expression, Double> a3 = new HashMap<>(); a3.put(Expression.parse("x"), 0.5); 
+        Map<Expression, Double> a4 = new HashMap<>(); a4.put(Expression.parse("x"), 1.0);
+        Map<Expression, Double> a5 = new HashMap<>(); a5.put(Expression.parse("x"), 2.0);
+        Map<Expression, Double> a6 = new HashMap<>(); a6.put(Expression.parse("x"), 3.0);
+        Map<Expression, Double> a7 = new HashMap<>(); a7.put(Expression.parse("x"), 4.0);
+        
+        assertEquals(0.0*1.0 + 0.0*1.0, result.simplify(a1).getValue(), EPSILON);
+        assertEquals(0.1*1.0 + 0.1*1.0, result.simplify(a2).getValue(), EPSILON);
+        assertEquals(0.5*1.0 + 0.5*1.0, result.simplify(a3).getValue(), EPSILON);
+        assertEquals(1.0*1.0 + 1.0*1.0, result.simplify(a4).getValue(), EPSILON);
+        assertEquals(2.0*1.0 + 2.0*1.0, result.simplify(a5).getValue(), EPSILON);
+        assertEquals(3.0*1.0 + 3.0*1.0, result.simplify(a6).getValue(), EPSILON);
+        assertEquals(4.0*1.0 + 4.0*1.0, result.simplify(a7).getValue(), EPSILON);
     }
     
     
@@ -2130,5 +2240,5 @@ public class ExpressionTest {
         assertEquals(Expression.parse("a*b"), a1.getLeftExpression());
         assertEquals(Expression.parse("c*d"), a1.getRightExpression());
     }
-    
+
 }
