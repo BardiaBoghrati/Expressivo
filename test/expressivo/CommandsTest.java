@@ -635,7 +635,7 @@ public class CommandsTest {
         assertEquals(0.1, Double.valueOf(Commands.simplify(expr, env3)), EPSILON);
         assertEquals(1.0, Double.valueOf(Commands.simplify(expr, env4)), EPSILON);
         assertEquals(10.0, Double.valueOf(Commands.simplify(expr, env5)), EPSILON);
-        assertEquals(10e30, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
+        assertEquals(1e30, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
     }
     
     @Test
@@ -710,7 +710,7 @@ public class CommandsTest {
         assertEquals(0.1 + 1.0, Double.valueOf(Commands.simplify(expr, env3)), EPSILON);
         assertEquals(1.0 + 1.0, Double.valueOf(Commands.simplify(expr, env4)), EPSILON);
         assertEquals(10.0 + 1.0, Double.valueOf(Commands.simplify(expr, env5)), EPSILON);
-        assertEquals(10e30 + 1.0, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
+        assertEquals(1e30 + 1.0, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
         
     }
     
@@ -727,11 +727,11 @@ public class CommandsTest {
         
 
         assertEquals(0.0*2.0, Double.valueOf(Commands.simplify(expr, env1)), EPSILON);
-        assertEquals(1e-30+2.0, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(1e-30*2.0, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
         assertEquals(0.1*2.0, Double.valueOf(Commands.simplify(expr, env3)), EPSILON);
         assertEquals(1.0*2.0, Double.valueOf(Commands.simplify(expr, env4)), EPSILON);
         assertEquals(10.0*2.0, Double.valueOf(Commands.simplify(expr, env5)), EPSILON);
-        assertEquals(10e30*2.0, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
+        assertEquals(1e30*2.0, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
         
     }
     
@@ -763,8 +763,8 @@ public class CommandsTest {
         
         String expr = "x*(x+y)";
         Map<String, Double> env1 = new HashMap<>();
-        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 1e20); env2.put("y", 1.0);
-        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 1e20);
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 1e30); env2.put("y", 1.0);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 1e30);
         Map<String, Double> env4 = new HashMap<>(); env4.put("y", 1.0);
         
         final double expected = 1e30*(1e30+1.0);

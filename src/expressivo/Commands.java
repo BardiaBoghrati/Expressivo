@@ -3,6 +3,7 @@
  */
 package expressivo;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -54,7 +55,19 @@ public class Commands {
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static String simplify(String expression, Map<String,Double> environment) {
-        throw new RuntimeException("unimplemented");
+        final Expression expr = Expression.parse(expression);
+        final Map<Expression, Double> env = new HashMap<>();
+        
+        // construct environment with String variable names in environment replaced with variable Expression with same name.
+        for(Map.Entry<String, Double> entry : environment.entrySet()){
+            Expression variable = Expression.parse(entry.getKey());
+            Double value = entry.getValue();
+            env.put(variable, value);
+        }
+        
+        Expression simplifiedExpr = expr.simplify(env);
+        
+        return simplifiedExpr.toString();
     }
     
 }
