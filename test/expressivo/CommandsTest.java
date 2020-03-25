@@ -5,6 +5,9 @@ package expressivo;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -601,5 +604,388 @@ public class CommandsTest {
     public void testCommandsDifferentiate_EmptyVariable(){
         Commands.differentiate("x", "");
     }
+    
+    
+    final private static double EPSILON = 0.0;
+    final private static String NUMBER_REGEX = "[0-9]+(.[0-9]+)?";
+    
+    @Test
+    public void testCommandsSimplify_SingleLargeInteger(){
+        String expr = "(4000000000)";
+        Map<String, Double> env = new HashMap<>(); env.put("x", 2.0);
+        
+        String result = Commands.simplify(expr, env);
+        
+        assertTrue(result.matches(NUMBER_REGEX));
+        assertEquals(4000000000.0, Double.valueOf(result), EPSILON);
+    }
+    
+    @Test
+    public void testCommandsSimplify_SingleVariable(){
+        String expr = "((x))";
+        Map<String, Double> env1 = new HashMap<>(); env1.put("x", 0.0);
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 1e-30);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 0.1);
+        Map<String, Double> env4 = new HashMap<>(); env4.put("x", 1.0);
+        Map<String, Double> env5 = new HashMap<>(); env5.put("x", 10.0);
+        Map<String, Double> env6 = new HashMap<>(); env6.put("x", 1e30);
+        
+        assertEquals(0.0, Double.valueOf(Commands.simplify(expr, env1)), EPSILON);
+        assertEquals(1e-30, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(0.1, Double.valueOf(Commands.simplify(expr, env3)), EPSILON);
+        assertEquals(1.0, Double.valueOf(Commands.simplify(expr, env4)), EPSILON);
+        assertEquals(10.0, Double.valueOf(Commands.simplify(expr, env5)), EPSILON);
+        assertEquals(10e30, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
+    }
+    
+    @Test
+    public void testCommandsSimplify_EvaluationNumberFormatSingleNumber(){
+        //check to see if evaluated numbers are of correct form
+        String expr = "0.00000000000001";
+        Map<String, Double> env = new HashMap<>(); env.put("x", 2.0);
+        
+        String result = Commands.simplify(expr, env);
+        
+        assertTrue(result.matches(NUMBER_REGEX));
+    }
+    
+    @Test
+    public void testCommandsSimplify_EvaluationNumberFormatSingleVariable(){
+        //check to see if evaluated numbers are of correct form
+        String expr = "(x)";
+        Map<String, Double> env = new HashMap<>(); env.put("x", 123e-20);
+        
+        String result = Commands.simplify(expr, env);
+        
+        assertTrue(result.matches(NUMBER_REGEX));
+    }
+    
+    @Test
+    public void testCommandsSimplify_EvaluationNumberFormatForSummation(){
+        //check to see if evaluated numbers are of correct form
+        String expr = "((x)+(y))";
+        Map<String, Double> env = new HashMap<>(); env.put("x", 0.1); env.put("y", 0.2);
+        
+        String result = Commands.simplify(expr, env);
+        
+        assertTrue(result.matches(NUMBER_REGEX));
+    }
+    
+    @Test
+    public void testCommandsSimplify_EvaluationNumberFormatForMultiplication(){
+        //check to see if evaluated numbers are of correct form
+        String expr = "(x)*(y)";
+        Map<String, Double> env = new HashMap<>(); env.put("x", 56.000000004852); env.put("y", 48.0008476);
+        
+        String result = Commands.simplify(expr, env);
+        
+        assertTrue(result.matches(NUMBER_REGEX));
+    }
+    
+    @Test
+    public void testCommandsSimplify_EvaluationNumberFormatForCoumpundEXP_WithNoVariables(){
+        //check to see if evaluated numbers are of correct form
+        String expr = "2000000000*2000000000.0";
+        Map<String, Double> env = new HashMap<>();
+        
+        String result = Commands.simplify(expr, env);
+        
+        assertTrue(result.matches(NUMBER_REGEX));
+    }
+    
+    @Test
+    public void testCommandsSimplify_SumExpression(){
+        String expr = "x+y";
+        
+        Map<String, Double> env1 = new HashMap<>(); env1.put("x", 0.0); env1.put("y", 1.0);
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 1e-30); env2.put("y", 1.0);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 0.1); env3.put("y", 1.0);
+        Map<String, Double> env4 = new HashMap<>(); env4.put("x", 1.0); env4.put("y", 1.0);
+        Map<String, Double> env5 = new HashMap<>(); env5.put("x", 10.0); env5.put("y", 1.0);
+        Map<String, Double> env6 = new HashMap<>(); env6.put("x", 1e30); env6.put("y", 1.0);
+        
 
+        assertEquals(0.0 + 1.0, Double.valueOf(Commands.simplify(expr, env1)), EPSILON);
+        assertEquals(1e-30 + 1.0, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(0.1 + 1.0, Double.valueOf(Commands.simplify(expr, env3)), EPSILON);
+        assertEquals(1.0 + 1.0, Double.valueOf(Commands.simplify(expr, env4)), EPSILON);
+        assertEquals(10.0 + 1.0, Double.valueOf(Commands.simplify(expr, env5)), EPSILON);
+        assertEquals(10e30 + 1.0, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_ProductExpression(){
+        String expr = "X*x";
+        
+        Map<String, Double> env1 = new HashMap<>(); env1.put("x", 0.0); env1.put("X", 2.0);
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 1e-30); env2.put("X", 2.0);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 0.1); env3.put("X", 2.0);
+        Map<String, Double> env4 = new HashMap<>(); env4.put("x", 1.0); env4.put("X", 2.0);
+        Map<String, Double> env5 = new HashMap<>(); env5.put("x", 10.0); env5.put("X", 2.0);
+        Map<String, Double> env6 = new HashMap<>(); env6.put("x", 1e30); env6.put("X", 2.0);
+        
+
+        assertEquals(0.0*2.0, Double.valueOf(Commands.simplify(expr, env1)), EPSILON);
+        assertEquals(1e-30+2.0, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(0.1*2.0, Double.valueOf(Commands.simplify(expr, env3)), EPSILON);
+        assertEquals(1.0*2.0, Double.valueOf(Commands.simplify(expr, env4)), EPSILON);
+        assertEquals(10.0*2.0, Double.valueOf(Commands.simplify(expr, env5)), EPSILON);
+        assertEquals(10e30*2.0, Double.valueOf(Commands.simplify(expr, env6)), EPSILON);
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_SumExpressionWithNoVariables(){
+        // Summing two large integers. In case numbers representing integers are stored as ints and
+        // added as ints, the sum will be greater than MAX int and test can expect integer overflow.
+        
+        String expr = "2000000000+2000000000";
+        Map<String, Double> env = new HashMap<>();
+        
+        final double expected = 2e9+2e9;
+        
+        assertEquals(expected, Double.valueOf(Commands.simplify(expr, env)), EPSILON);
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_SimplificationOrder1(){
+        // the spec indicates that for any expression its simplification is
+        // equivalent to substitution of environment into the expression 
+        // and then if no variables remain evaluate the result. For any expression,
+        // the order in which the variables are substituted doesn't effect the result of
+        // overall substitution; Hence, the order in which the simplification is applied
+        // doesn't effect the overall simplification. Verification of this property is
+        // what this test tries to achieve.
+        
+        // will distribution x inside during effect the evaluation of the expression?
+        
+        String expr = "x*(x+y)";
+        Map<String, Double> env1 = new HashMap<>();
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 1e20); env2.put("y", 1.0);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 1e20);
+        Map<String, Double> env4 = new HashMap<>(); env4.put("y", 1.0);
+        
+        final double expected = 1e30*(1e30+1.0);
+        
+        assertEquals(expected, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env1), env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env3), env4)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env4), env3)), EPSILON);
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_SimplificationOrder2(){
+        // will like terms be collected? for example here, if simplification with empty
+        // environment collects like terms, the resulting expression will not evaluate
+        // to same value as 0.1*x + 0.2*x for all floating-point numbers. Hence, violating the spec.
+        
+        String expr = "0.1*x+0.2*x";
+        Map<String, Double> env1 = new HashMap<>();
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 10.0);
+        
+        final double expected = 0.1*10.0 + 0.2*10.0;
+        
+        assertEquals(expected, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env1), env2)), EPSILON);
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_SimplificationOrder3(){
+        // the spec indicates that for any expression its simplification is
+        // equivalent to substitution of environment into the expression 
+        // and then if no variables remain evaluate the result. For any expression,
+        // the order in which the variables are substituted doesn't effect the result of
+        // overall substitution; Hence, the order in which the simplification is applied
+        // doesn't effect the overall simplification. Verification of this property is
+        // what this test tries to achieve.
+        
+        // Here non-associativity of floating-point addition effects order of evaluation;
+        // hence, depending on how simplification is done it can effect result of simplification.
+        
+        String expr = "x+0.2+y";
+        Map<String, Double> env1 = new HashMap<>();
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 0.1); env2.put("y", 0.3);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 0.1);
+        Map<String, Double> env4 = new HashMap<>(); env4.put("y", 0.3);
+        
+        final double expected = (0.1+0.2)+0.3;
+        
+        assertEquals(expected, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env1), env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env3), env4)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env4), env3)), EPSILON);;
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_SimplificationOrder4(){
+        // the spec indicates that for any expression its simplification is
+        // equivalent to substitution of environment into the expression 
+        // and then if no variables remain evaluate the result. For any expression,
+        // the order in which the variables are substituted doesn't effect the result of
+        // overall substitution; Hence, the order in which the simplification is applied
+        // doesn't effect the overall simplification. Verification of this property is
+        // what this test tries to achieve.
+        
+        // Here non-associativity of floating-point multiplication effects order of evaluation;
+        // hence, depending on how simplification is done it can effect result of simplification.
+        
+        String expr = "x*0.2*y";
+        Map<String, Double> env1 = new HashMap<>(); env1.put("z", 0.0);
+        Map<String, Double> env2 = new HashMap<>(); env2.put("x", 0.1); env2.put("y", 0.3); env2.put("z", 0.0);
+        Map<String, Double> env3 = new HashMap<>(); env3.put("x", 0.1); env3.put("z", 0.0);
+        Map<String, Double> env4 = new HashMap<>(); env4.put("y", 0.3); env4.put("z", 0.0);
+        
+        final double expected = (0.1*0.2)*0.3;
+        
+        assertEquals(expected, Double.valueOf(Commands.simplify(expr, env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env1), env2)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env3), env4)), EPSILON);
+        assertEquals(expected, Double.valueOf(Commands.simplify(Commands.simplify(expr, env4), env3)), EPSILON);;
+        
+    }
+    
+    @Test
+    public void testCommandsSimplify_DifferentGroupingOfSameElements(){
+        // Since (0.1*0.2)*0.3 != 0.1*(0.2*0.3), this test helps to verify that implementation is 
+        // able to distinguish between different groupings of same elements. It also verifies the redundant 
+        // parentheses have no effect on evaluation of an expression resulting from simplification.
+        
+        //TODO Does the spec allow this test?
+        
+        String expr_A1 = "0.1*0.2*0.3";
+        String expr_A2 = "(0.1*0.2)*0.3";
+        Map<String, Double> env_A = new HashMap<>(); env_A.put("x", 0.0);
+        
+        final double expected_A = (0.1*0.2)*0.3;
+        
+        assertEquals(expected_A, Double.valueOf(Commands.simplify(expr_A1, env_A)), EPSILON);
+        assertEquals(expected_A, Double.valueOf(Commands.simplify(expr_A2, env_A)), EPSILON);
+        
+        String expr_B1 = "0.1*(0.2*0.3)";
+        String expr_B2 = "((0.1)*((0.2*0.3)))";
+        Map<String, Double> env_B = new HashMap<>();
+        
+        final double expected_B = 0.1*(0.2*0.3);
+        
+        assertEquals(expected_B, Double.valueOf(Commands.simplify(expr_B1, env_B)), EPSILON);
+        assertEquals(expected_B, Double.valueOf(Commands.simplify(expr_B2, env_B)), EPSILON);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_InvalidNumberRepresentation(){
+        String expr = "12.34e5"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_UnmatchedLeftParanthese(){
+        String expr = "(a"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_UnmatchedRightParanthese(){
+        String expr = "a)"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_EmptyParantheses(){
+        String expr = "2*()"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_UnsupportedOperation_Negation(){
+        String expr = "-(a)"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_UnsupportedOperation_Subtraction(){
+        String expr = "2.0 - 1.0"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_UnsupportedOperation_Exponentiation(){
+        String expr = "x^2"; 
+        Map<String, Double> env = new HashMap<>(); env.put("x", 2.0);
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_UnsupportedOperation_Division(){
+        String expr = "1/2"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_NegativeNumber(){
+        String expr = "-10.0"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_IllFormattedNumber(){
+        String expr = "2 . 3"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_MissingOperation1(){
+        String expr = "x2"; 
+        Map<String, Double> env = new HashMap<>(); env.put("x", 3.0);
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_MissingOperation2(){
+        String expr = "2 x"; 
+        Map<String, Double> env = new HashMap<>(); env.put("x", 3.0);
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_VariableContainsIllegalChar1(){
+        String expr = "v@ri@ble"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testCommandsSimplification_VariableContainsIllegalChar2(){
+        String expr = "var1able"; 
+        Map<String, Double> env = new HashMap<>();
+        
+        Commands.simplify(expr, env);
+    }
+    
 }

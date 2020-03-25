@@ -46,10 +46,11 @@ public class Commands {
      * @param environment maps variables to values.  Variables are required to be case-sensitive nonempty 
      *         strings of letters.  The set of variables in environment is allowed to be different than the 
      *         set of variables actually found in expression.  Values must be nonnegative numbers.
-     * @return an expression equal to the input, but after substituting every variable v that appears in both
-     *         the expression and the environment with its value, environment.get(v).  If there are no
-     *         variables left in this expression after substitution, it must be evaluated to a single number.
-     *         Additional simplifications to the expression may be done at the implementor's discretion.
+     * @return an string, <i>strExp</i>, representing an expression, <i>e</i>, <i>functionally-equal</i> to an expression, <i>e'</i>, which is the input <b>expression</b> but 
+     *         with all of its variables that appear in the <b>environment</b> substituted for their corresponding value. If there are no variables left in 
+     *         <i>e'</i>, <i>strExp</i> must be the abstract representation of <i>e'</i> evaluated to a single number, that is, a representation with no white spaces or parentheses. 
+     *         In this context,  <i>functionally-equal</i> means that under any environment, <i>env</i>, containing assignments to all variables in <i>e'</i>, <i>e</i> and 
+     *         <i>e'</i> evaluates to a equal numbers.
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static String simplify(String expression, Map<String,Double> environment) {
