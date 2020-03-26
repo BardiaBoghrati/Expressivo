@@ -24,7 +24,64 @@ public class Number implements Expression {
     
     @Override
     public String toString(){
-        return String.valueOf(number);
+        // This implementation used the string decimal representation returned by String.valueOf()
+        // and re-formats it into decimal form if the string returned is in computerized scientific format.
+        // The reason for doing it this, rather than other ways like String.formatter(), is to ensure
+        // the decimal number represented by toString() is accurate to enough significant digits to ensure
+        // this.number is the closest double precision floating-point number to this.toString().
+        // i.e to ensure this.number == Double.valueOf(this.toString()).
+        
+        String value = String.valueOf(number);
+        
+        if(value.contains("E")){
+            // value is in computerized scientific form and must be
+            // re-formatted into decimal form.
+            
+            String[] split = value.split("[\\.E]");
+            
+            String decimal = split[0];
+            String fraction = split[1];
+            String exponent = split[2];       
+            int expt = Integer.valueOf(exponent);
+            
+            if(expt < 0){
+                final int numberOfShifts = -expt;
+                final int lengthOfDecimal = decimal.length();
+                
+                if(numberOfShifts > lengthOfDecimal){
+                    return "0." + stringOfZeros(numberOfShifts-lengthOfDecimal) + decimal + fraction;
+                }
+                
+                return decimal.substring(0, lengthOfDecimal - numberOfShifts) + "." 
+                        + decimal.substring(lengthOfDecimal - numberOfShifts)+ fraction;
+            }else{
+                final int numberOfShifts = expt;
+                final int lengthOfFraction = fraction.length();
+                
+                if(numberOfShifts > lengthOfFraction){
+                    return decimal + fraction + stringOfZeros(numberOfShifts - lengthOfFraction) + ".0";
+                }
+                
+                return decimal + fraction.substring(0, numberOfShifts) 
+                         + "." + fraction.substring(numberOfShifts);
+            } 
+        }
+        
+        return value; // no need to re-format the value; it's already in decimal form.
+    }
+    
+    private String stringOfZeros(int length){
+        // requires: length >= 0
+        // effects: returns a string of zeros of length specified
+        //          with length zero corresponding to empty string.
+        
+        StringBuilder sb = new StringBuilder();;
+        
+        for(int i = 0; i < length; i++){
+            sb.append("0");
+        }
+        
+        return sb.toString();
     }
     
     @Override
