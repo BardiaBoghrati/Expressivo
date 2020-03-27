@@ -26,7 +26,7 @@ public class Number implements Expression {
     public String toString(){
         // This implementation used the string decimal representation returned by String.valueOf()
         // and re-formats it into decimal form if the string returned is in computerized scientific format.
-        // The reason for doing it this, rather than other ways like String.formatter(), is to ensure
+        // The reason for doing it this, rather than other ways like String.format(), is to ensure
         // the decimal number represented by toString() is accurate to enough significant digits to ensure
         // this.number is the closest double precision floating-point number to this.toString().
         // i.e to ensure this.number == Double.valueOf(this.toString()).

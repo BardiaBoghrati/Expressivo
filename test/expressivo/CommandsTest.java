@@ -606,7 +606,10 @@ public class CommandsTest {
     }
     
     
+    // precision with which double values are compared.
     final private static double EPSILON = 0.0;
+    
+    // required format of single numbers outputs resulting from evaluation of a expression.
     final private static String NUMBER_REGEX = "[0-9]+(.[0-9]+)?";
     
     @Test

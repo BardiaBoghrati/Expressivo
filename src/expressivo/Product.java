@@ -20,7 +20,16 @@ public class Product implements Expression {
     
     @Override
     public String toString(){
-        return "("+left+")*("+right+")";
+        String toStringLeft = left.toString();
+        String toStringRight = right.toString();
+        
+        if(left.isSum())
+            toStringLeft = "("+toStringLeft+")";
+        
+        if(right.isSum() || right.isProduct())
+            toStringRight = "("+toStringRight+")";
+        
+        return toStringLeft+"*"+toStringRight;
     }
     
     @Override

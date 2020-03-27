@@ -20,7 +20,13 @@ public class Sum implements Expression {
     
     @Override
     public String toString(){
-        return "("+left+")+("+right+")";
+        String toStringLeft = left.toString();
+        String toStringRight = right.toString();
+        
+        if(right.isSum())
+            toStringRight = "("+toStringRight+")";
+        
+        return toStringLeft+" + "+toStringRight;
     }
     
     @Override
