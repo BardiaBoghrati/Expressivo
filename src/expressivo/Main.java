@@ -60,6 +60,10 @@ public class Main {
             } catch (NoSuchElementException nse) {
                 // currentExpression was empty
                 System.out.println("must enter an expression before using this command");
+            } catch (IllegalArgumentException iae) {
+                System.out.println(iae.getMessage());
+            } catch (CommandSyntaxException cse) {
+                System.out.println(cse.getMessage());
             } catch (RuntimeException re) {
                 System.out.println(re.getClass().getName() + ": " + re.getMessage());
             }
